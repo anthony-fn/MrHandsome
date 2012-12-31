@@ -2,6 +2,8 @@ package com.anthony.playstation;
 
 import java.util.List;
 
+import mstar.production.common.ConfigManager;
+
 import org.apache.log4j.Logger;
 
 import com.anthony.playstation.configuration.ChinaEquity;
@@ -9,7 +11,6 @@ import com.anthony.playstation.configuration.ChinaEquityDataDescription;
 import com.anthony.playstation.configuration.ChinaEquityMarket;
 import com.anthony.playstation.configuration.Exceptions.ConfigurationException;
 import com.anthony.playstation.dataDump.DataDumpForTSDB;
-import com.anthony.playstation.dataDump.Exceptions.WriteDataFailure;
 
 
 public class PlayStation
@@ -24,6 +25,11 @@ public class PlayStation
 	{
 		logger.info("This is the start of a beautiful journey!");
 
+		String dataSource = ConfigManager.getInstance().getString("DataSource", "abc");
+		String dataTarget = ConfigManager.getInstance().getString("DataTarget", "def");
+		
+		logger.info("Data Source: "+dataSource);
+		logger.info("Data Target: "+dataTarget);
 		try
 		{
 			ChinaEquityMarket market = new ChinaEquityMarket("MarketDescriptions/ChinaEquity.data");
