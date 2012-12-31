@@ -28,6 +28,12 @@
   <dependencies>
   
   	<dependency>
+    	<groupId>com.morningstar.data</groupId>
+	    <artifactId>oldtsapi</artifactId>
+	    <version>1.2</version>
+    </dependency>
+    
+  	<dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.8</version>
@@ -41,4 +47,66 @@
     </dependency>
     
   </dependencies>
+  
+      <build>  
+		<finalName>MrHandsome</finalName>
+   
+    <plugins>  
+       
+	   <plugin>  
+         <groupId>org.apache.maven.plugins</groupId>  
+         <artifactId>maven-compiler-plugin</artifactId>
+         <version>2.3.2</version>  
+         <configuration>  
+           <source>1.6</source>  
+           <target>1.6</target>  
+         </configuration>  
+        </plugin>
+	
+        <plugin>  
+            <groupId>org.apache.maven.plugins</groupId>  
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>2.3.2</version>
+            <configuration>  
+                <archive>  
+                    <manifest>  
+                        <addClasspath>true</addClasspath>  
+                        <!-- 
+                        <mainClass>com.anthony.playstation.PlayStation</mainClass>
+                        -->  
+                    </manifest>  
+                </archive>  
+            </configuration>  
+        </plugin>  
+      
+        <plugin>  
+            <groupId>org.apache.maven.plugins</groupId>  
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>2.3</version>
+            <configuration>  
+                <archive>  
+                    <manifest>  
+                    <!-- 
+                    <mainClass>com.anthony.playstation.PlayStation</mainClass>
+                    -->   
+                    </manifest>  
+                </archive>  
+                <descriptorRefs>  
+                    <descriptorRef>jar-with-dependencies</descriptorRef>  
+                </descriptorRefs>
+                <finalName>MrHandsome-AllInOne</finalName>
+                <appendAssemblyId>false</appendAssemblyId>
+            </configuration>
+            <executions>
+				<execution>
+					<id>make-assembly</id>
+					<phase>package</phase>
+					<goals>
+						<goal>single</goal>
+					</goals>
+				</execution>
+			</executions>
+       </plugin>      
+    </plugins>      
+  </build>
 </project>

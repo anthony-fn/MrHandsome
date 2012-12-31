@@ -27,6 +27,7 @@ public class ChinaEquityDataDescription
 		ReportSelf();
 	}
 	
+	
 	private void initMembers( String fileName ) throws ConfigurationException
 	{
 		InputStream stream = ChinaEquityDataDescription.class.getClassLoader().getResourceAsStream(fileName);
@@ -38,6 +39,8 @@ public class ChinaEquityDataDescription
 		{
 			while( (line = reader.readLine()) != null )
 			{
+				if( line.startsWith("#"))
+					continue;
 				String[] temp = line.split("\t");
 				if( m_members.containsKey(temp[0]))
 				{

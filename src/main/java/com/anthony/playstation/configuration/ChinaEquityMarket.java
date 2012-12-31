@@ -28,6 +28,10 @@ public class ChinaEquityMarket
 		ReportSelf();
 	}
 	
+	public List<ChinaEquity> getMemberList()
+	{
+		return m_members;
+	}
 	private void initMembers( String fileName ) throws ConfigurationException
 	{
 		InputStream stream = ChinaEquityMarket.class.getClassLoader().getResourceAsStream(fileName);
