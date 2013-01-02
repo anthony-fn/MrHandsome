@@ -2,13 +2,13 @@ package com.anthony.playstation.data;
 
 public enum MappingType
 {
-    Aggregates,
-    BaseObject,
-    CorporateActionAdjustment,
-    SalesPosition,
-    TaxAdjustment,
-    Restated,
-    Rank;
+    MappingAggregates,
+    MappingBaseObject,
+    MappingCorporateActionAdjustment,
+    MappingSalesPosition,
+    MappingTaxAdjustment,
+    MappingRestated,
+    MappingRank;
     
     public String toString(){	
     	return name();

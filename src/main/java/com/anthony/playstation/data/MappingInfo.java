@@ -1,7 +1,7 @@
 package com.anthony.playstation.data;
 
 public class MappingInfo {
-	    private MappingType mapping=MappingType.BaseObject;
+	    private MappingType mapping=MappingType.MappingBaseObject;
 		private int tsType=0;
 		private String objectId="";
 		private byte classificationMethod=0; 

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
 
-import com.anthony.playstation.configuration.Exceptions.ConfigurationException;
+import com.anthony.playstation.exceptions.ConfigurationException;
 
 public class ChinaEquityDataDescription
 {

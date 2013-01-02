@@ -1,4 +1,4 @@
-package com.anthony.playstation.configuration.Exceptions;
+package com.anthony.playstation.exceptions;
 
 public class ConfigurationException extends Exception
 {
