@@ -30,9 +30,10 @@ public class TSDBProxy extends ADataIOProxy{
 			switch( mapping.getMapping() )
 			{
 				case MappingAggregates:
-					result = ts_r_obj.load_ts_content(mapping.getTsType(), mapping.getObjectId());
+					
 					break;
 				case MappingBaseObject:
+					result = ts_r_obj.load_ts_content(mapping.getTsType(), mapping.getObjectId());
 					break;
 				case MappingCorporateActionAdjustment:
 					result = ts_r_cor.load_ts_content(mapping.getTsType(), mapping.getObjectId());

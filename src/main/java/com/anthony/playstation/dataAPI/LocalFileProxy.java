@@ -14,12 +14,13 @@ import com.anthony.playstation.exceptions.DataIOException;
 
 public class LocalFileProxy extends ADataIOProxy{
 
-	private String m_prefix = "";
+	private String m_srcprefix = "";
+	private String m_tarprefix = "";
 	
-	private String getFileName( MappingInfo mapping )
+	private String getFileName( String prefix, MappingInfo mapping )
 	{
 		StringBuilder sb = new StringBuilder();
-		sb.append(m_prefix+"/");
+		sb.append(prefix+"/");
 		
 		switch( mapping.getMapping() )
 		{
@@ -34,9 +35,19 @@ public class LocalFileProxy extends ADataIOProxy{
 		}
 		return sb.toString();
 	}
-	public LocalFileProxy( String prefix )
+	
+	public LocalFileProxy( String srcprefix , String tarprefix)
 	{
-		m_prefix = prefix;
+		if( srcprefix == null )
+			m_srcprefix="";
+		else
+			m_srcprefix = srcprefix;
+		
+		if( tarprefix == null )
+			m_tarprefix="";
+		else
+			m_tarprefix = tarprefix;
+		
 	}
 	
 	public byte[] loadDataTemp( File datafile, MappingInfo mapping) throws DataIOException
@@ -79,7 +90,7 @@ public class LocalFileProxy extends ADataIOProxy{
 	@Override
 	public byte[] loadData(MappingInfo mapping) throws DataIOException {
 		byte[] result = null;
-		File datafile = new File(this.getFileName(mapping));
+		File datafile = new File(this.getFileName(m_srcprefix,mapping));
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream( datafile );
@@ -118,7 +129,7 @@ public class LocalFileProxy extends ADataIOProxy{
 	public int saveData(MappingInfo mapping, byte[] content)
 			throws DataIOException {
 		
-		File datafile = new File(this.getFileName(mapping));
+		File datafile = new File(this.getFileName(m_tarprefix,mapping));
 		if(datafile.exists())
 			datafile.delete();
 		FileOutputStream fos = null;
@@ -129,7 +140,7 @@ public class LocalFileProxy extends ADataIOProxy{
 			bos = new BufferedOutputStream(fos);
 			bos.write(content);
 			bos.flush();
-			fos.flush();
+			//fos.flush();
 		} catch (IOException e) {
 			throw new DataIOException("Saving data to local file failed for "+mapping.toString(), e);
 		}

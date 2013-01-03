@@ -6,33 +6,43 @@ import com.anthony.playstation.exceptions.DataProxyOperationException;
 
 public class LocalFileProxyFactory extends ADataIOProxyFactory{
 
-	private String m_prefix = "";
+	private String m_srcprefix = "";
+	private String m_tarprefix = "";
 	
 	private void checkPrefix() throws DataProxyOperationException
 	{
-		if( m_prefix == null || m_prefix.isEmpty() )
-			throw new DataProxyOperationException("Local file proxy is not valid: "+m_prefix, null);
+		if( m_srcprefix == null || m_srcprefix.isEmpty() )
+			throw new DataProxyOperationException("Local file source proxy is not valid: "+m_srcprefix, null);
+		if( m_tarprefix == null || m_tarprefix.isEmpty() )
+			throw new DataProxyOperationException("Local file target proxy is not valid: "+m_tarprefix, null);
 		
-		File file = new File(m_prefix);
+		this.mkdir(m_srcprefix);
+		this.mkdir(m_tarprefix);
+	}
+	
+	private void mkdir( String path ) throws DataProxyOperationException
+	{
+		File file = new File(path);
 		
 		if( !file.exists() && !file.mkdir())
 		{
-			throw new DataProxyOperationException("Can't creat local file repositry: "+m_prefix, null);
+			throw new DataProxyOperationException("Can't creat local file repositry: "+path, null);
 		}
 		else if( !file.isDirectory() )
 		{
-			throw new DataProxyOperationException(m_prefix +" has already been taken, please change a prefix !", null);
+			throw new DataProxyOperationException(path +" has already been taken, please change a prefix !", null);
 		}
 	}
 	
-	public LocalFileProxyFactory( String prefix ) throws DataProxyOperationException 
+	public LocalFileProxyFactory( String sourcePrefix, String targetPrefix ) throws DataProxyOperationException 
 	{
-		m_prefix = prefix;
+		m_srcprefix = sourcePrefix;
+		m_tarprefix = targetPrefix;
 		checkPrefix();
 	}
 	@Override
 	public ADataIOProxy getDataProxy() throws DataProxyOperationException {
-		return new LocalFileProxy( m_prefix);
+		return new LocalFileProxy( m_srcprefix, m_tarprefix);
 	}
 
 	@Override

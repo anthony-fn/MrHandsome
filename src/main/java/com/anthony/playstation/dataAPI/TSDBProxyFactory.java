@@ -11,7 +11,8 @@ public class TSDBProxyFactory extends ADataIOProxyFactory{
 	private  static tscontext m_context_r = null;
 	private  static tscontext m_context_w = null;
 	
-	private void initTSContext( tscontext context, String setting) throws DataProxyOperationException
+	/*
+	 * private void initTSContext( tscontext context, String setting) throws DataProxyOperationException
 	{
 		synchronized(m_lock){
 			if(context==null){
@@ -22,11 +23,28 @@ public class TSDBProxyFactory extends ADataIOProxyFactory{
 				} 
 			}
 		}
-	}
+	}*/
 	public TSDBProxyFactory( String from, String to ) throws DataProxyOperationException
 	{
-		this.initTSContext(m_context_r, from);
-		this.initTSContext(m_context_w, to);
+		synchronized(m_lock){
+			if(m_context_r==null){
+				try {
+					m_context_r = new tscontext(from);
+				} catch (TSException e) {
+					throw new DataProxyOperationException( "Can't init context for TSDBProxy !", e);
+				} 
+			}
+			
+			if(m_context_w==null){
+				try {
+					m_context_w = new tscontext(to);
+				} catch (TSException e) {
+					throw new DataProxyOperationException( "Can't init context for TSDBProxy !", e);
+				} 
+			}
+		}
+		//this.initTSContext(m_context_r, from);
+		//this.initTSContext(m_context_w, to);
 	}
 	
 	@Override

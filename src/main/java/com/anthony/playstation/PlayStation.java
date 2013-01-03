@@ -5,8 +5,12 @@ package com.anthony.playstation;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 //import mstar.production.common.*;
+
+import mstar.production.common.ConfigManager;
 
 import org.apache.log4j.Logger;
 
@@ -19,10 +23,20 @@ import com.anthony.playstation.dataAPI.ADataIOProxy;
 import com.anthony.playstation.dataAPI.ADataIOProxyFactory;
 import com.anthony.playstation.dataAPI.LocalFileProxy;
 import com.anthony.playstation.dataAPI.LocalFileProxyFactory;
+import com.anthony.playstation.dataAPI.TSDBProxyFactory;
+import com.anthony.playstation.dataDump.DataDumper;
 import com.anthony.playstation.exceptions.ConfigurationException;
+import com.anthony.playstation.exceptions.DataDumpException;
 import com.anthony.playstation.exceptions.DataIOException;
+import com.anthony.playstation.exceptions.JobBatchException;
+import com.anthony.playstation.exceptions.JobOperationException;
 //import mstar.production.common.*;
 import com.anthony.playstation.exceptions.DataProxyOperationException;
+import com.anthony.playstation.executor.AJobBatch;
+import com.anthony.playstation.executor.AJobFactory;
+import com.anthony.playstation.executor.DataDumpJobFactory;
+import com.anthony.playstation.executor.FixedJobBatch;
+import com.anthony.playstation.executor.LocalExecutor;
 
 
 // TODO: Auto-generated Javadoc
@@ -36,6 +50,68 @@ public class PlayStation
 	private static final Logger logger = Logger.getLogger(PlayStation.class);
 	//private static DataDumpForTSDB m_dumper = new DataDumpForTSDB();
 
+	public static void DumpDataFromTSDBToLocal( List<ChinaEquity> list ) throws DataProxyOperationException, DataDumpException, JobBatchException, JobOperationException
+	{
+			ADataIOProxyFactory tsdb = new TSDBProxyFactory(ConfigManager.getInstance().getString("TSDB_Source"),
+					ConfigManager.getInstance().getString("TSDB_Target"));
+			ADataIOProxyFactory local = new LocalFileProxyFactory(ConfigManager.getInstance().getString("LocalFile_Source"),
+					ConfigManager.getInstance().getString("LocalFile_Target"));
+			
+			LocalExecutor executor = new LocalExecutor(Integer.parseInt(ConfigManager.getInstance().getString("LocalThreadNum")),
+					Integer.parseInt(ConfigManager.getInstance().getString("LocalThreadMaxWait")));
+			
+			AJobFactory dumpFactory = new DataDumpJobFactory(tsdb, local);
+			
+			int totalNum = list.size();
+			int index = 0;
+			int error = 0;
+			AJobBatch jobBatch = new FixedJobBatch(totalNum*2);
+			for( ChinaEquity equity : list )
+			{
+				++index;
+				MappingInfo mappingObj = new MappingInfo();
+				
+				mappingObj.setObjectId(equity.getPerformanceID());
+				mappingObj.setTsType(2);
+				
+				mappingObj.setMapping(MappingType.MappingBaseObject);
+				dumpFactory.LoadFactory(mappingObj);
+				jobBatch.pushOneJob(dumpFactory.getOneJob());
+				
+				
+				MappingInfo mappingCor = new MappingInfo();
+				
+				mappingCor.setObjectId(equity.getPerformanceID());
+				mappingCor.setTsType(2);
+				
+				mappingCor.setMapping(MappingType.MappingCorporateActionAdjustment);
+				dumpFactory.LoadFactory(mappingCor);
+				jobBatch.pushOneJob(dumpFactory.getOneJob());
+				logger.info("Data dumped "+index+"/"+totalNum);
+				
+			}
+
+			executor.submit(jobBatch);
+			
+			while( !jobBatch.isFinished() )
+			{
+				try
+				{
+					Thread.sleep(1000);
+				} catch (InterruptedException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				logger.info(jobBatch.getRemaining()+"/"+jobBatch.getJobNum());
+			}
+			
+			
+			tsdb.closeFactory();
+			local.closeFactory();
+			executor.dispose();
+	}
 	/**
 	 * The main method.
 	 *
@@ -45,11 +121,6 @@ public class PlayStation
 	{
 		logger.info("This is the start of a beautiful journey!");
 		
-		//String dataSource = ConfigManager.getInstance().getString("DataSource", "abc");
-		//String dataTarget = ConfigManager.getInstance().getString("DataTarget", "def");
-		
-		//logger.info("Data Source: "+dataSource);
-		//logger.info("Data Target: "+dataTarget);
 		try
 		{
 			ChinaEquityMarket market = new ChinaEquityMarket("MarketDescriptions/ChinaEquity.data");
@@ -60,54 +131,31 @@ public class PlayStation
 				logger.info("No member to deal with!");
 				return;
 			}
-			List<ChinaEquity> list = market.getMemberList();
-			int totalNum = market.getEquityNumber();
-			int index = 0;
-			ADataIOProxyFactory factory = new LocalFileProxyFactory("Data");
-			ADataIOProxy proxy = factory.getDataProxy();
 			
-			for( ChinaEquity equity : list )
-			{
-				++index;
-				MappingInfo mapping = new MappingInfo();
-				
-				mapping.setObjectId(equity.getPerformanceID());
-				mapping.setTsType(2);
-				
-				mapping.setMapping(MappingType.MappingBaseObject);
-				
-				String filePath = "Data/"+mapping.getObjectId();
-				
-				File datafile = new File(filePath+"-base");
-				byte[] content = ((LocalFileProxy)proxy).loadDataTemp(datafile, mapping);
-				proxy.saveData(mapping, content);
-				datafile.delete();
-				
-				datafile = new File(filePath+"-corp");
-				mapping.setMapping(MappingType.MappingCorporateActionAdjustment);
-				content = ((LocalFileProxy)proxy).loadDataTemp(datafile, mapping);
-				proxy.saveData(mapping, content);
-				datafile.delete();
-				
-				//m_dumper.DumpPriceToLocal( equity.getPerformanceID(), 2);
-				logger.info("Data dumped "+index+"/"+totalNum);
-				
-			}
-			factory.closeFactory();
-			//m_dumper.Dispose();
+			PlayStation.DumpDataFromTSDBToLocal(market.getMemberList());
 			logger.info("Finished!");
 			
 		} catch (ConfigurationException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (DataProxyOperationException e) {
+		} catch (DataProxyOperationException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (DataIOException e) {
+		} catch (DataDumpException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		} catch (JobBatchException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JobOperationException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
 	}
 
 }
