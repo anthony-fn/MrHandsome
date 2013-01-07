@@ -1,5 +1,7 @@
 package com.anthony.playstation.dataAPI;
 
+import com.anthony.playstation.UniformType;
+import com.anthony.playstation.data.DataSeries;
 import com.anthony.playstation.data.MappingInfo;
 import com.anthony.playstation.exceptions.DataIOException;
 import com.morningstar.data.tsapi.BaseObject;
@@ -75,6 +77,18 @@ public class TSDBProxy extends ADataIOProxy{
 			throw new DataIOException("Saving data to TSDB failed for "+mapping.toString(), e);
 		}
 		return result;
+	}
+
+	@Override
+	public int saveUniformedData(DataSeries series) throws DataIOException
+	{
+		throw new DataIOException("TSDB proxy should not have this function !");
+	}
+
+	@Override
+	public DataSeries loadUniformdData(String objID, UniformType type) throws DataIOException
+	{
+		throw new DataIOException("TSDB proxy should not have this function !");
 	}
 
 }

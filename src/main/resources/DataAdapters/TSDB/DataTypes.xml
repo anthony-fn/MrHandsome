@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="GB2312"?>
+<DataTypes>
+
+	<DataType tsDataTypeID = "1">
+		<Set>false</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "3">F</FixedTypes>
+	</DataType>
+	
+	<DataType tsDataTypeID = "2">
+		<Set>false</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "4">F</FixedTypes>
+	</DataType>
+	
+	<DataType tsDataTypeID = "3">
+		<Set>false</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">F</FixedTypes>
+	</DataType>
+	
+	<DataType tsDataTypeID = "4">
+		<Set>false</Set>
+		<FixedTypes num = "2">D</FixedTypes>
+		<FixedTypes num = "1">F</FixedTypes>
+	</DataType>
+	
+	<DataType tsDataTypeID = "5">
+		<Set>false</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+	</DataType>
+	
+	<DataType tsDataTypeID = "6">
+		<Set>false</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">L</FixedTypes>
+	</DataType>
+	
+	<DataType tsDataTypeID = "7">
+		<Set>false</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">I</FixedTypes>
+	</DataType>
+	
+	<DataType tsDataTypeID = "8">
+		<Set>false</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "2">F</FixedTypes>
+	</DataType>
+	
+	<!--TSDataType 9: tp1B1F-->
+	<DataType tsDataTypeID = "10">
+		<Set>true</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+		<SetTypes num = "1">B</SetTypes>
+		<SetTypes num = "1">F</SetTypes>
+	</DataType>
+	
+	<!--TSDataType 11: tp1B1I-->
+	<DataType tsDataTypeID = "12">
+		<Set>true</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+		<SetTypes num = "1">B</SetTypes>
+		<SetTypes num = "1">I</SetTypes>
+	</DataType>
+	
+	<!--TSDataType 13: tp1Cb1F-->
+	<DataType tsDataTypeID = "14">
+		<Set>true</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+		<SetTypes num = "1">Cb</SetTypes>
+		<SetTypes num = "1">F</SetTypes>
+	</DataType>
+	
+	<!--TSDataType 15: tp1Cc1F  (Cc=3C)-->
+	<DataType tsDataTypeID = "16">
+		<Set>true</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+		<SetTypes num = "3">C</SetTypes>
+		<SetTypes num = "1">F</SetTypes>
+	</DataType>
+	
+	<!--TSDataType 17: tp1I1F-->
+	<DataType tsDataTypeID = "18">
+		<Set>true</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+		<SetTypes num = "1">I</SetTypes>
+		<SetTypes num = "1">F</SetTypes>
+	</DataType>
+	
+	<DataType tsDataTypeID = "19">
+		<Set>false</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">Cj</FixedTypes>
+	</DataType>
+	
+	<!--TSDataType 20: tp3B3F-->
+	<DataType tsDataTypeID = "21">
+		<Set>true</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<SetTypes num = "3">B</SetTypes>
+		<SetTypes num = "3">F</SetTypes>
+	</DataType>
+	
+	<!--TSDataType 22: tp1B3F-->
+	<DataType tsDataTypeID = "23">
+		<Set>true</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+		<SetTypes num = "1">B</SetTypes>
+		<SetTypes num = "3">F</SetTypes>
+	</DataType>
+	
+	<DataType tsDataTypeID = "24">
+		<Set>false</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">C</FixedTypes>
+	</DataType>
+	
+	<DataType tsDataTypeID = "25">
+		<Set>false</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "99">L</FixedTypes>
+	</DataType>
+	
+	<DataType tsDataTypeID = "26">
+		<Set>false</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">L</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+	</DataType>
+	
+	<!--TSDataType 9: tp1B1F-->
+	<DataType tsDataTypeID = "27">
+		<Set>true</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">Cj</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+		<SetTypes num = "1">B</SetTypes>
+		<SetTypes num = "1">F</SetTypes>
+	</DataType>
+	
+	<DataType tsDataTypeID = "28">
+		<Set>false</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+		<FixedTypes num = "3">F</FixedTypes>
+	</DataType>
+	
+	<!--TSDataType 29: tp1Cl5F-->
+	<DataType tsDataTypeID = "30">
+		<Set>true</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+		<SetTypes num = "1">Cl</SetTypes>
+		<SetTypes num = "5">F</SetTypes>
+	</DataType>
+	
+	<!--TSDataType 31: tp1Cj2Ca1F2L   (Ca = 1C)-->
+	<DataType tsDataTypeID = "32">
+		<Set>true</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+		<SetTypes num = "1">Cj</SetTypes>
+		<SetTypes num = "2">C</SetTypes>
+		<SetTypes num = "1">F</SetTypes>
+		<SetTypes num = "2">L</SetTypes>
+	</DataType>
+	
+	<!-- TSDataType 33: tp1Cj2B-->
+	<DataType tsDataTypeID = "34">
+		<Set>true</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+		<SetTypes num = "1">Cj</SetTypes>
+		<SetTypes num = "2">B</SetTypes>
+	</DataType>
+	
+	<DataType tsDataTypeID = "35">
+		<Set>false</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "3">L</FixedTypes>
+	</DataType>
+	
+	<!--No TSDataType 36 defined-->
+	
+	<DataType tsDataTypeID = "37">
+		<Set>false</Set>
+		<FixedTypes num = "4">D</FixedTypes>
+	</DataType>
+	
+	<DataType tsDataTypeID = "38">
+		<Set>false</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "4">L</FixedTypes>
+	</DataType>
+	
+	<DataType tsDataTypeID = "39">
+		<Set>false</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "5">B</FixedTypes>
+	</DataType>
+	
+	<!--TSDataType 40: tp1D2B5F-->
+	<DataType tsDataTypeID = "41">
+		<Set>true</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+		<SetTypes num = "1">D</SetTypes>
+		<SetTypes num = "2">B</SetTypes>
+		<SetTypes num = "5">F</SetTypes>
+	</DataType>
+	
+	<!--No TSDataType 42 defined-->
+	<!--No TSDataType 43 defined-->
+	<!--No TSDataType 44 defined-->
+	
+	<!--TSDataType 31: tp1Cj2Ca1F2L    (Ca = 1C)-->
+	<DataType tsDataTypeID = "45">
+		<Set>true</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">U</FixedTypes>
+		<SetTypes num = "1">Cj</SetTypes>
+		<SetTypes num = "2">C</SetTypes>
+		<SetTypes num = "1">F</SetTypes>
+		<SetTypes num = "2">L</SetTypes>
+	</DataType>
+	
+	<!--TSDataType 46: tp1Bs1B1F-->
+	<DataType tsDataTypeID = "47">
+		<Set>true</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">F</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+		<SetTypes num = "1">Bs</SetTypes>
+		<SetTypes num = "1">B</SetTypes>
+		<SetTypes num = "1">F</SetTypes>
+	</DataType>
+	
+	<DataType tsDataTypeID = "48">
+		<Set>false</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "2">L</FixedTypes>
+	</DataType>
+	
+	<DataType tsDataTypeID = "49">
+		<Set>false</Set>
+		<FixedTypes num = "2">D</FixedTypes>
+		<FixedTypes num = "1">L</FixedTypes>
+	</DataType>
+	
+	<!--TSDataType 50: tp1Cj2L-->
+	<DataType tsDataTypeID = "51">
+		<Set>true</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+		<SetTypes num = "1">Cj</SetTypes>
+		<SetTypes num = "2">L</SetTypes>
+	</DataType>
+	
+	<!--TSDataType 52: tp1B2Cj-->
+	<!--Don't know if this is used DataType tsDataTypeID = "53">
+		<Set>true</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+		<SetTypes num = "1">B</SetTypes>
+		<SetTypes num = "2">Cj</SetTypes>
+	</DataType-->
+	
+	<!--TSDataType 54: tp3L-->
+	<!--Don't know if this is used DataType tsDataTypeID = "55">
+		<Set>true</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+		<SetTypes num = "3">L</SetTypes>
+	</DataType-->
+	
+	<!--TSDataType 56: tp1Cb3L-->
+	<DataType tsDataTypeID = "57">
+		<Set>true</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+		<SetTypes num = "1">Cb</SetTypes>
+		<SetTypes num = "3">L</SetTypes>
+	</DataType>
+	
+	<!--TSDataType 58: tp1B1L-->
+	<DataType tsDataTypeID = "59">
+		<Set>true</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">Cj</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+		<SetTypes num = "1">B</SetTypes>
+		<SetTypes num = "1">L</SetTypes>
+	</DataType>
+	
+	<!--TSDataType 58: tp1B1L-->
+	<DataType tsDataTypeID = "60">
+		<Set>true</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+		<SetTypes num = "1">B</SetTypes>
+		<SetTypes num = "1">L</SetTypes>
+	</DataType>
+	
+	<!--Don't know if this is used DataType tsDataTypeID = "61">
+		<Set>false</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">Ci</FixedTypes>
+	</DataType-->
+	
+	<!--Don't know if this is used DataType tsDataTypeID = "62">
+		<Set>false</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">Cl</FixedTypes>
+	</DataType-->
+	
+	<!--TSDataType 63: tp1B99L-->
+	<DataType tsDataTypeID = "64">
+		<Set>true</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+		<SetTypes num = "1">B</SetTypes>
+		<SetTypes num = "99">L</SetTypes>
+	</DataType>
+	
+	<DataType tsDataTypeID = "66">
+		<Set>false</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">F</FixedTypes>
+		<FixedTypes num = "1">I</FixedTypes>
+		<FixedTypes num = "3">Il</FixedTypes>
+	</DataType>
+	
+	<!--TSDataType 67: tp1B5L-->
+	<DataType tsDataTypeID = "68">
+		<Set>true</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+		<SetTypes num = "1">B</SetTypes>
+		<SetTypes num = "5">L</SetTypes>
+	</DataType>
+	
+	<DataType tsDataTypeID = "69">
+		<Set>false</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">F</FixedTypes>
+		<FixedTypes num = "2">I</FixedTypes>
+		<FixedTypes num = "3">Il</FixedTypes>
+	</DataType>
+	
+	<DataType tsDataTypeID = "70">
+		<Set>false</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "3">I</FixedTypes>
+	</DataType>
+	
+	<DataType tsDataTypeID = "71">
+		<Set>false</Set>
+		<FixedTypes num = "3">D</FixedTypes>
+	</DataType>
+	
+	<!--Don't know if this is used DataType tsDataTypeID = "72">
+		<Set>false</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "2">L</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+	</DataType-->
+	
+	<!--Don't know if this is used DataType tsDataTypeID = "73">
+		<Set>false</Set>
+		<FixedTypes num = "2">D</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+	</DataType-->
+	
+	<!--TSDataType 74: tp1Cj1L-->
+	<DataType tsDataTypeID = "75">
+		<Set>true</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "100">L</FixedTypes>
+		<FixedTypes num = "1">B</FixedTypes>
+		<SetTypes num = "1">Cj</SetTypes>
+		<SetTypes num = "1">L</SetTypes>
+	</DataType>
+	
+	<DataType tsDataTypeID = "76">
+		<Set>false</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "2">B</FixedTypes>
+	</DataType>
+	
+	<DataType tsDataTypeID = "77">
+		<Set>false</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "6">B</FixedTypes>
+	</DataType>
+	
+		<!--TSDataType 78: tp2Cj1F-->
+	<DataType tsDataTypeID = "79">
+		<Set>true</Set>
+		<FixedTypes num = "1">D</FixedTypes>
+		<FixedTypes num = "1">U</FixedTypes>
+		<SetTypes num = "2">Cj</SetTypes>
+		<SetTypes num = "1">L</SetTypes>
+	</DataType>
+</DataTypes>

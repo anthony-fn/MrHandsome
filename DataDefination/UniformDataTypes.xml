@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="GB2312"?>
+<UniformTypes>	
+	<Type id = "1" type = "ValueUnit">OpenMarketPrice</Type>
+	<Type id = "2" type = "ValueUnit">HighMarketPrice</Type>
+	<Type id = "3" type = "ValueUnit">LowMarketPrice</Type>
+	<Type id = "4" type = "ValueUnit">CloseMarketPrice</Type>
+	<Type id = "5" type = "ValueUnit">SplitedOpenMarketPrice</Type>
+	<Type id = "6" type = "ValueUnit">SplitedHighMarketPrice</Type>
+	<Type id = "7" type = "ValueUnit">SplitedLowMarketPrice</Type>
+	<Type id = "8" type = "ValueUnit">SplitedCloseMarketPrice</Type>
+</UniformTypes>

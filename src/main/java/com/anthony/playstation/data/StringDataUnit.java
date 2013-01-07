@@ -5,6 +5,10 @@ import java.util.Calendar;
 import com.anthony.playstation.exceptions.InvalidDataUnitException;
 
 public class StringDataUnit extends ADataUnit{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5006123960266863949L;
 	private String m_value = "";
 	
 	public StringDataUnit( Calendar cal, String value )
@@ -39,4 +43,11 @@ public class StringDataUnit extends ADataUnit{
 		
 		return m_value.compareTo( ((StringDataUnit)unit).getValue());
 	}
+	
+	@Override
+	public void print()
+	{
+		System.out.println(this.getCalendar().toString()+"\t"+m_value);
+	}
+	
 }

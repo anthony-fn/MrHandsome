@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="GB2312"?>
+<TSTypes>
+	<TSType tsType = "2" name = "tsMarketPrice">
+		<SetData>false</SetData>
+		<TypeUnit data = "Date">Date</TypeUnit>
+		<TypeUnit data = "Float">OpenPrice</TypeUnit>
+		<TypeUnit data = "Float">HighPrice</TypeUnit>
+		<TypeUnit data = "Float">LowPrice</TypeUnit>
+		<TypeUnit data = "Float">ClosePrice</TypeUnit>
+	</TSType>
+</TSTypes>

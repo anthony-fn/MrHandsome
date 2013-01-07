@@ -1,11 +1,16 @@
 package com.anthony.playstation.data;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import com.anthony.playstation.exceptions.InvalidDataUnitException;
 
 public class ValueDataUnit extends ADataUnit{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4251354759542239246L;
 	private float m_value = 0;
 	
 	public ValueDataUnit( Calendar cal, float value )
@@ -39,6 +44,14 @@ public class ValueDataUnit extends ADataUnit{
 		}
 		
 		return (int) (m_value-((ValueDataUnit)unit).getValue());
+	}
+
+	@Override
+	public void print()
+	{
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		System.out.println(sdf.format(this.getCalendar().getTime())+"\t"+m_value);
 	}
 	
 }

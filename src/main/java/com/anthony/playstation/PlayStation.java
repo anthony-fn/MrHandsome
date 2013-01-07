@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import com.anthony.playstation.configuration.ChinaEquity;
 import com.anthony.playstation.configuration.ChinaEquityDataDescription;
 import com.anthony.playstation.configuration.ChinaEquityMarket;
+import com.anthony.playstation.data.DataSeries;
 import com.anthony.playstation.data.MappingInfo;
 import com.anthony.playstation.data.MappingType;
 import com.anthony.playstation.dataAPI.ADataIOProxy;
@@ -24,10 +25,13 @@ import com.anthony.playstation.dataAPI.ADataIOProxyFactory;
 import com.anthony.playstation.dataAPI.LocalFileProxy;
 import com.anthony.playstation.dataAPI.LocalFileProxyFactory;
 import com.anthony.playstation.dataAPI.TSDBProxyFactory;
+import com.anthony.playstation.dataAdapter.TSDB.TSDBDataAdapter;
 import com.anthony.playstation.dataDump.DataDumper;
 import com.anthony.playstation.exceptions.ConfigurationException;
+import com.anthony.playstation.exceptions.DataAdapterException;
 import com.anthony.playstation.exceptions.DataDumpException;
 import com.anthony.playstation.exceptions.DataIOException;
+import com.anthony.playstation.exceptions.InvalidDataUnitException;
 import com.anthony.playstation.exceptions.JobBatchException;
 import com.anthony.playstation.exceptions.JobOperationException;
 //import mstar.production.common.*;
@@ -52,19 +56,18 @@ public class PlayStation
 
 	public static void DumpDataFromTSDBToLocal( List<ChinaEquity> list ) throws DataProxyOperationException, DataDumpException, JobBatchException, JobOperationException
 	{
-			ADataIOProxyFactory tsdb = new TSDBProxyFactory(ConfigManager.getInstance().getString("TSDB_Source"),
-					ConfigManager.getInstance().getString("TSDB_Target"));
+			//ADataIOProxyFactory tsdb = new TSDBProxyFactory(ConfigManager.getInstance().getString("TSDB_Source"),
+			//		ConfigManager.getInstance().getString("TSDB_Target"));
 			ADataIOProxyFactory local = new LocalFileProxyFactory(ConfigManager.getInstance().getString("LocalFile_Source"),
 					ConfigManager.getInstance().getString("LocalFile_Target"));
 			
 			LocalExecutor executor = new LocalExecutor(Integer.parseInt(ConfigManager.getInstance().getString("LocalThreadNum")),
 					Integer.parseInt(ConfigManager.getInstance().getString("LocalThreadMaxWait")));
 			
-			AJobFactory dumpFactory = new DataDumpJobFactory(tsdb, local);
+			AJobFactory dumpFactory = new DataDumpJobFactory(local, local);
 			
 			int totalNum = list.size();
 			int index = 0;
-			int error = 0;
 			AJobBatch jobBatch = new FixedJobBatch(totalNum*2);
 			for( ChinaEquity equity : list )
 			{
@@ -108,7 +111,7 @@ public class PlayStation
 			}
 			
 			
-			tsdb.closeFactory();
+			//tsdb.closeFactory();
 			local.closeFactory();
 			executor.dispose();
 	}
@@ -123,16 +126,51 @@ public class PlayStation
 		
 		try
 		{
+			TSDBToUniformDB.load("DataDefination/TSDBToUniform.xml");
+			UniformTypeDB.load("DataDefination/UniformDataTypes.xml");
 			ChinaEquityMarket market = new ChinaEquityMarket("MarketDescriptions/ChinaEquity.data");
-			ChinaEquityDataDescription desc = new ChinaEquityDataDescription("DataDescriptions/TSDB/ChinaEquity.tsdbtypes");
+			//ChinaEquityDataDescription desc = new ChinaEquityDataDescription("DataDescriptions/TSDB/ChinaEquity.tsdbtypes");
+			DumpDataFromTSDBToLocal(market.getMemberList());
 			
+			/*ADataIOProxyFactory local = new LocalFileProxyFactory(ConfigManager.getInstance().getString("LocalFile_Source"),
+					ConfigManager.getInstance().getString("LocalFile_Target"));
+			ADataIOProxy proxy = local.getDataProxy();
+			
+			TSDBToUniformDB.load("DataDefination/TSDBToUniform.xml");
+			UniformTypeDB.load("DataDefination/UniformDataTypes.xml");
+			MappingInfo mapping = new MappingInfo();
+			mapping.setObjectId("0P0000MO7M");
+			mapping.setTsType(2);
+			mapping.setMapping(MappingType.MappingCorporateActionAdjustment);
+			
+			byte[] result = proxy.loadData(mapping);
+			//TSDBDataAdapter adapter = new TSDBDataAdapter();
+			
+			List<DataSeries> data = TSDBDataAdapter.loadSeries(TSDBToUniformDB.getUniformType(2, mapping.getMapping()), mapping,
+					result);
+			DataSeries temp1 = data.get(1);
+			//////////////////////////////
+			
+			for( DataSeries series : data )
+			{
+				proxy.saveUniformedData(series);
+			}
+			DataSeries temp = proxy.loadUniformdData("0P0000MO7M", UniformTypeDB.getType(6));
+			//temp.print();
+			
+			if( temp.compare(temp1) )
+				logger.info("Data matched !");
+			else
+			{
+				logger.info("Doesn't match !");
+			}
 			if( (market.getEquityNumber() <= 0) || (desc.getDataTypeNumber() <= 0) )
 			{
 				logger.info("No member to deal with!");
 				return;
 			}
-			
-			PlayStation.DumpDataFromTSDBToLocal(market.getMemberList());
+			*/
+			//PlayStation.DumpDataFromTSDBToLocal(market.getMemberList());
 			logger.info("Finished!");
 			
 		} catch (ConfigurationException e)
@@ -143,16 +181,13 @@ public class PlayStation
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (DataDumpException e)
-		{
+		} catch (DataDumpException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (JobBatchException e)
-		{
+		} catch (JobBatchException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (JobOperationException e)
-		{
+		} catch (JobOperationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 

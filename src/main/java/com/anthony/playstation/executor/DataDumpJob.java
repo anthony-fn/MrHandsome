@@ -1,7 +1,14 @@
 package com.anthony.playstation.executor;
 
+import java.util.List;
+
+import com.anthony.playstation.TSDBToUniformDB;
+import com.anthony.playstation.data.DataSeries;
 import com.anthony.playstation.data.MappingInfo;
 import com.anthony.playstation.dataAPI.ADataIOProxy;
+import com.anthony.playstation.dataAdapter.TSDB.TSDBDataAdapter;
+import com.anthony.playstation.exceptions.ConfigurationException;
+import com.anthony.playstation.exceptions.DataAdapterException;
 import com.anthony.playstation.exceptions.DataDumpException;
 import com.anthony.playstation.exceptions.DataIOException;
 import com.anthony.playstation.exceptions.DataProxyOperationException;
@@ -36,7 +43,14 @@ public class DataDumpJob extends AJob
 		try
 		{
 			byte [] content = m_source.loadData(m_mapping);
-			result = m_target.saveData(m_mapping, content);
+			//result = m_target.saveData(m_mapping, content);
+			List<DataSeries> data = TSDBDataAdapter.loadSeries(TSDBToUniformDB.getUniformType(m_mapping.getTsType(), m_mapping.getMapping()), 
+					m_mapping, content);
+			
+			for( DataSeries series : data )
+			{
+				result = m_target.saveUniformedData(series);
+			}
 			
 			if( result != 0 )
 			{
@@ -45,6 +59,12 @@ public class DataDumpJob extends AJob
 		} catch (DataIOException e)
 		{
 			throw new Exception (new DataDumpException("Dump data failed !", new Exception(e) ) );
+		} catch (DataAdapterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		m_finished = true;
 		return result;

@@ -1,11 +1,16 @@
 package com.anthony.playstation.data;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 import com.anthony.playstation.exceptions.InvalidDataUnitException;
 
-public abstract class ADataUnit {
+public abstract class ADataUnit implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7638268717474206448L;
 	private Calendar m_cal = null;
 	private DataUnitType m_type = DataUnitType.DefaultUnit;
 			
@@ -33,6 +38,7 @@ public abstract class ADataUnit {
 		return m_cal.compareTo(unit.getCalendar());
 	}
 	
+	public abstract void print();
 	
 	public abstract Object getUniverseValue();
 	public abstract int compareValue( ADataUnit unit) throws InvalidDataUnitException;
