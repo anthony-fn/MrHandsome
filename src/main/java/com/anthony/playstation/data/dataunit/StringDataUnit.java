@@ -1,30 +1,29 @@
-package com.anthony.playstation.data;
+package com.anthony.playstation.data.dataunit;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import com.anthony.playstation.data.ADataUnit;
 import com.anthony.playstation.exceptions.InvalidDataUnitException;
 
-public class ValueDataUnit extends ADataUnit{
-
+public class StringDataUnit extends ADataUnit{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -4251354759542239246L;
-	private float m_value = 0;
+	private static final long serialVersionUID = 5006123960266863949L;
+	private String m_value = "";
 	
-	public ValueDataUnit( Calendar cal, float value )
+	public StringDataUnit( Calendar cal, String value )
 	{
 		this.setCalendar(cal);
 		this.setValue(value);
-		this.setType(DataUnitType.ValueUnit);
+		this.setType(DataUnitType.StringUnit);
 	}
 
-	public float getValue() {
+	public String getValue() {
 		return m_value;
 	}
 
-	public void setValue(float m_value) {
+	public void setValue(String m_value) {
 		this.m_value = m_value;
 	}
 
@@ -43,15 +42,13 @@ public class ValueDataUnit extends ADataUnit{
 			throw new InvalidDataUnitException( sb.toString(), null);
 		}
 		
-		return (int) (m_value-((ValueDataUnit)unit).getValue());
+		return m_value.compareTo( ((StringDataUnit)unit).getValue());
 	}
-
+	
 	@Override
 	public void print()
 	{
-
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		System.out.println(sdf.format(this.getCalendar().getTime())+"\t"+m_value);
+		System.out.println(this.getCalendar().toString()+"\t"+m_value);
 	}
 	
 }

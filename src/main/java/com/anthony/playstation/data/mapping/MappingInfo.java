@@ -1,4 +1,4 @@
-package com.anthony.playstation.data;
+package com.anthony.playstation.data.mapping;
 
 public class MappingInfo {
 	    private MappingType mapping=MappingType.MappingBaseObject;

@@ -1,4 +1,4 @@
-package com.anthony.playstation.data;
+package com.anthony.playstation.data.dataseries;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -6,7 +6,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.anthony.playstation.UniformType;
+import com.anthony.playstation.data.ADataUnit;
+import com.anthony.playstation.data.dataunit.DataUnitType;
 import com.anthony.playstation.exceptions.InvalidDataUnitException;
 
 public class DataSeries implements Serializable{
@@ -39,7 +40,8 @@ public class DataSeries implements Serializable{
 	{
 		if( src == null )
 			return false;
-		
+		int a = m_list.size();
+		int b = src.getUnitList().size();
 		if( !m_name.equals(src.getSeriesName()))
 			return false;
 		else if( !m_uniType.equals(src.getUniType()) )
@@ -94,7 +96,7 @@ public class DataSeries implements Serializable{
 		if( !this.isValidType(unit) )
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.append("Target unit: "+this.getUnitType().toString());
+			sb.append("Target unit: "+this.getValueType().toString());
 			sb.append(" but you're trying to add a "+unit.getType().toString()+" !");
 			throw new InvalidDataUnitException( sb.toString(), null);
 		}
@@ -129,7 +131,7 @@ public class DataSeries implements Serializable{
 		}
 	}
 
-	public DataUnitType getUnitType()
+	public DataUnitType getValueType()
 	{
 		if( m_list.size() == 0 )
 			return DataUnitType.DefaultUnit;

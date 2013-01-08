@@ -1,8 +1,8 @@
-package com.anthony.playstation;
+package com.anthony.playstation.data.dataseries;
 
 import java.io.Serializable;
 
-import com.anthony.playstation.data.DataUnitType;
+import com.anthony.playstation.data.dataunit.DataUnitType;
 import com.anthony.playstation.exceptions.ConfigurationException;
 
 public class UniformType implements Serializable

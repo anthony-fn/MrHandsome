@@ -1,4 +1,4 @@
-package com.anthony.playstation;
+package com.anthony.playstation.dataAdapter.TSDB;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -8,11 +8,14 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import mstar.production.common.ConfigManager;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import com.anthony.playstation.data.MappingType;
+
+import com.anthony.playstation.data.mapping.MappingType;
 import com.anthony.playstation.exceptions.ConfigurationException;
 
 class TSDBToUniformDBKey{
@@ -71,13 +74,16 @@ public abstract class TSDBToUniformDB
 	public static TSDBToUniform getUniformType( int tsType, MappingType type ) throws ConfigurationException
 	{
 		if( !m_inited )
-			throw new ConfigurationException("TSDBToUniformDB hasn't been inited!");
+		{
+			TSDBToUniformDB.load();
+		}
 		TSDBToUniformDBKey key = new TSDBToUniformDBKey( tsType, type );
 		return m_list.get(key.toString());
 	}
 	
-	public synchronized static void load( String fileName ) throws ConfigurationException
+	private synchronized static void load () throws ConfigurationException
 	{
+		String fileName = ConfigManager.getInstance().getString("TSDBMappingtoUniform");
 		if(m_inited)
 			return;
 		DocumentBuilderFactory factory ;
@@ -97,6 +103,7 @@ public abstract class TSDBToUniformDB
 				Element unit = (Element)typeList.item(i);
 				int tsType = Integer.parseInt(unit.getAttribute("tsType"));
 				String unitType = unit.getAttribute("name");
+				String className = unit.getAttribute("className");
 				
 				NodeList mappingList = unit.getElementsByTagName("Mapping");
 				
@@ -114,7 +121,7 @@ public abstract class TSDBToUniformDB
 								+key.toString());
 					else{
 						
-						TSDBToUniform toUniform = new TSDBToUniform(tsType, unitType, tsMappingType);
+						TSDBToUniform toUniform = new TSDBToUniform(tsType, unitType, tsMappingType, className);
 						toUniform.addUniformTypes(unitTypeList);
 						m_list.put(key.toString(), toUniform);
 					}						

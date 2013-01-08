@@ -1,4 +1,4 @@
-package com.anthony.playstation;
+package com.anthony.playstation.data.dataseries;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -7,6 +7,8 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
+import mstar.production.common.ConfigManager;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -21,8 +23,10 @@ public abstract class UniformTypeDB
 	private static boolean m_inited = false;
 	
 	
-	public synchronized static void load( String file ) throws ConfigurationException
+	private synchronized static void load() throws ConfigurationException
 	{
+		String file = ConfigManager.getInstance().getString("UniformTypeDB");
+		
 		if( m_inited )
 			return;
 		DocumentBuilderFactory factory ;
@@ -67,7 +71,9 @@ public abstract class UniformTypeDB
 	public static UniformType getType( int type ) throws ConfigurationException
 	{
 		if( !m_inited )
-			throw new ConfigurationException("UniformTypeDB hasn't been inited!");
+		{
+			UniformTypeDB.load();
+		}
 		return m_types.get(type);
 	}
 }

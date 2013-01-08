@@ -17,16 +17,19 @@ import org.apache.log4j.Logger;
 import com.anthony.playstation.configuration.ChinaEquity;
 import com.anthony.playstation.configuration.ChinaEquityDataDescription;
 import com.anthony.playstation.configuration.ChinaEquityMarket;
-import com.anthony.playstation.data.DataSeries;
-import com.anthony.playstation.data.MappingInfo;
-import com.anthony.playstation.data.MappingType;
+import com.anthony.playstation.data.dataseries.DataSeries;
+import com.anthony.playstation.data.dataseries.UniformType;
+import com.anthony.playstation.data.dataseries.UniformTypeDB;
+import com.anthony.playstation.data.mapping.MappingInfo;
+import com.anthony.playstation.data.mapping.MappingType;
 import com.anthony.playstation.dataAPI.ADataIOProxy;
 import com.anthony.playstation.dataAPI.ADataIOProxyFactory;
 import com.anthony.playstation.dataAPI.LocalFileProxy;
 import com.anthony.playstation.dataAPI.LocalFileProxyFactory;
 import com.anthony.playstation.dataAPI.TSDBProxyFactory;
 import com.anthony.playstation.dataAdapter.TSDB.TSDBDataAdapter;
-import com.anthony.playstation.dataDump.DataDumper;
+import com.anthony.playstation.dataAdapter.TSDB.TSDBToUniformDB;
+import com.anthony.playstation.dataAdapter.protoBuf.ProtoBufAdapter;
 import com.anthony.playstation.exceptions.ConfigurationException;
 import com.anthony.playstation.exceptions.DataAdapterException;
 import com.anthony.playstation.exceptions.DataDumpException;
@@ -56,15 +59,15 @@ public class PlayStation
 
 	public static void DumpDataFromTSDBToLocal( List<ChinaEquity> list ) throws DataProxyOperationException, DataDumpException, JobBatchException, JobOperationException
 	{
-			//ADataIOProxyFactory tsdb = new TSDBProxyFactory(ConfigManager.getInstance().getString("TSDB_Source"),
-			//		ConfigManager.getInstance().getString("TSDB_Target"));
+			ADataIOProxyFactory tsdb = new TSDBProxyFactory(ConfigManager.getInstance().getString("TSDB_Source"),
+					ConfigManager.getInstance().getString("TSDB_Target"));
 			ADataIOProxyFactory local = new LocalFileProxyFactory(ConfigManager.getInstance().getString("LocalFile_Source"),
 					ConfigManager.getInstance().getString("LocalFile_Target"));
 			
 			LocalExecutor executor = new LocalExecutor(Integer.parseInt(ConfigManager.getInstance().getString("LocalThreadNum")),
 					Integer.parseInt(ConfigManager.getInstance().getString("LocalThreadMaxWait")));
 			
-			AJobFactory dumpFactory = new DataDumpJobFactory(local, local);
+			AJobFactory dumpFactory = new DataDumpJobFactory(tsdb, local);
 			
 			int totalNum = list.size();
 			int index = 0;
@@ -78,8 +81,7 @@ public class PlayStation
 				mappingObj.setTsType(2);
 				
 				mappingObj.setMapping(MappingType.MappingBaseObject);
-				dumpFactory.LoadFactory(mappingObj);
-				jobBatch.pushOneJob(dumpFactory.getOneJob());
+				jobBatch.pushOneJob(dumpFactory.getOneJob(mappingObj));
 				
 				
 				MappingInfo mappingCor = new MappingInfo();
@@ -88,10 +90,8 @@ public class PlayStation
 				mappingCor.setTsType(2);
 				
 				mappingCor.setMapping(MappingType.MappingCorporateActionAdjustment);
-				dumpFactory.LoadFactory(mappingCor);
-				jobBatch.pushOneJob(dumpFactory.getOneJob());
+				jobBatch.pushOneJob(dumpFactory.getOneJob(mappingCor));
 				logger.info("Data dumped "+index+"/"+totalNum);
-				
 			}
 
 			executor.submit(jobBatch);
@@ -111,9 +111,13 @@ public class PlayStation
 			}
 			
 			
-			//tsdb.closeFactory();
+			tsdb.closeFactory();
 			local.closeFactory();
 			executor.dispose();
+	}
+	
+	public static void abc ( )
+	{
 	}
 	/**
 	 * The main method.
@@ -126,36 +130,38 @@ public class PlayStation
 		
 		try
 		{
-			TSDBToUniformDB.load("DataDefination/TSDBToUniform.xml");
-			UniformTypeDB.load("DataDefination/UniformDataTypes.xml");
+			ChinaEquityDataDescription desc = new ChinaEquityDataDescription("DataDescriptions/TSDB/ChinaEquity.tsdbtypes");
 			ChinaEquityMarket market = new ChinaEquityMarket("MarketDescriptions/ChinaEquity.data");
-			//ChinaEquityDataDescription desc = new ChinaEquityDataDescription("DataDescriptions/TSDB/ChinaEquity.tsdbtypes");
 			DumpDataFromTSDBToLocal(market.getMemberList());
 			
 			/*ADataIOProxyFactory local = new LocalFileProxyFactory(ConfigManager.getInstance().getString("LocalFile_Source"),
 					ConfigManager.getInstance().getString("LocalFile_Target"));
 			ADataIOProxy proxy = local.getDataProxy();
-			
-			TSDBToUniformDB.load("DataDefination/TSDBToUniform.xml");
-			UniformTypeDB.load("DataDefination/UniformDataTypes.xml");
+		
 			MappingInfo mapping = new MappingInfo();
 			mapping.setObjectId("0P0000MO7M");
 			mapping.setTsType(2);
 			mapping.setMapping(MappingType.MappingCorporateActionAdjustment);
 			
 			byte[] result = proxy.loadData(mapping);
-			//TSDBDataAdapter adapter = new TSDBDataAdapter();
-			
-			List<DataSeries> data = TSDBDataAdapter.loadSeries(TSDBToUniformDB.getUniformType(2, mapping.getMapping()), mapping,
+			TSDBDataAdapter adapter = new TSDBDataAdapter();
+			ProtoBufAdapter proAdapter = new ProtoBufAdapter();
+			List<DataSeries> data = adapter.loadSeries(mapping,
 					result);
+			
 			DataSeries temp1 = data.get(1);
 			//////////////////////////////
 			
-			for( DataSeries series : data )
+			/*for( DataSeries series : data )
 			{
-				proxy.saveUniformedData(series);
+				//proxy.saveUniformedData(series);
+				((LocalFileProxy)proxy).saveUniformData( proAdapter, series);
+				
 			}
-			DataSeries temp = proxy.loadUniformdData("0P0000MO7M", UniformTypeDB.getType(6));
+			//DataSeries temp = proxy.loadUniformdData("0P0000MO7M", UniformTypeDB.getType(6));
+			
+			
+			DataSeries temp = ((LocalFileProxy)proxy).loadUniformdDataFromProto(mapping.getObjectId(), UniformTypeDB.getType(6), proAdapter);
 			//temp.print();
 			
 			if( temp.compare(temp1) )
@@ -163,11 +169,6 @@ public class PlayStation
 			else
 			{
 				logger.info("Doesn't match !");
-			}
-			if( (market.getEquityNumber() <= 0) || (desc.getDataTypeNumber() <= 0) )
-			{
-				logger.info("No member to deal with!");
-				return;
 			}
 			*/
 			//PlayStation.DumpDataFromTSDBToLocal(market.getMemberList());
@@ -181,13 +182,16 @@ public class PlayStation
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (DataDumpException e) {
+		} catch (DataDumpException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (JobBatchException e) {
+		} catch (JobBatchException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (JobOperationException e) {
+		} catch (JobOperationException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 

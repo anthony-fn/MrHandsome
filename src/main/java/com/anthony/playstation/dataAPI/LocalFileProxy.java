@@ -7,38 +7,18 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.util.List;
 
-import com.anthony.playstation.UniformType;
-import com.anthony.playstation.data.DataSeries;
-import com.anthony.playstation.data.MappingInfo;
-import com.anthony.playstation.data.MappingType;
+import com.anthony.playstation.data.dataseries.DataSeries;
+import com.anthony.playstation.data.dataseries.UniformType;
+import com.anthony.playstation.dataAdapter.ADataAdapter;
+import com.anthony.playstation.exceptions.DataAdapterException;
 import com.anthony.playstation.exceptions.DataIOException;
 
 public class LocalFileProxy extends ADataIOProxy{
 
 	private String m_srcprefix = "";
 	private String m_tarprefix = "";
-	
-	private String getFileName( String prefix, MappingInfo mapping )
-	{
-		StringBuilder sb = new StringBuilder();
-		sb.append(prefix+"/");
-		
-		switch( mapping.getMapping() )
-		{
-		case MappingBaseObject:
-			sb.append(mapping.getObjectId()+"_"+mapping.getTsType()+"_"+MappingType.MappingBaseObject.toString());
-			break;
-		case MappingCorporateActionAdjustment:
-			sb.append(mapping.getObjectId()+"_"+mapping.getTsType()+"_"+MappingType.MappingCorporateActionAdjustment.toString());
-			break;
-		default:
-			break;
-		}
-		return sb.toString();
-	}
 	
 	public LocalFileProxy( String srcprefix , String tarprefix)
 	{
@@ -53,95 +33,18 @@ public class LocalFileProxy extends ADataIOProxy{
 			m_tarprefix = tarprefix;
 		
 	}
-	
-	public int saveUniformedData( DataSeries series ) throws DataIOException
-	{
-		String fileName = m_tarprefix+"/"+series.getFileName();
-		File dataFile = new File(fileName);
-		FileOutputStream fos = null;
-		ObjectOutputStream oos = null;
-		if(dataFile.exists())
-			dataFile.delete();
-		
-		try
-		{
-			fos = new FileOutputStream(dataFile);
-			oos = new ObjectOutputStream(fos);
-			
-			oos.writeObject(series);
-			oos.flush();
-			
-		} catch (FileNotFoundException e)
-		{
-			throw new DataIOException("Can't create target file for "+series.getPerformanceID()
-					+" "+series.getSeriesName()+" .");
-		} catch (IOException e)
-		{
-			throw new DataIOException("Failed to save data for "+series.getPerformanceID()
-					+" "+series.getSeriesName()+" .", e);
-		}
-		
-		finally {
-			try
-			{
-				oos.close();
-				fos.close();				
-			} catch (IOException e)
-			{
-				throw new DataIOException("Failed to save data for "+series.getPerformanceID()
-						+" "+series.getSeriesName()+" .", e);
-			}
-			
-		}
-		
-		return 0;
-	}
-	
-	public DataSeries loadUniformdData(String objID, UniformType type ) throws DataIOException
-	{
-		String fileName = m_srcprefix+ "/" +objID+"_"+type.getTypeName();
-		File file = new File(fileName);
-		FileInputStream fis = null;
-		ObjectInputStream ois = null;
-		DataSeries result = null;
-		try
-		{
-			fis = new FileInputStream(file);
-			ois = new ObjectInputStream(fis);
-			result = (DataSeries)ois.readObject();
-			
-			
-		} catch (FileNotFoundException e)
-		{
-			throw new DataIOException("Can't find source file for "+objID+" "+type.getTypeName()+" .");
-		} catch (IOException e)
-		{
-			throw new DataIOException("Loading data from local file failed for "+objID+" "+type.getTypeName()+" failed.",
-					e);
-		} catch (ClassNotFoundException e)
-		{
-			throw new DataIOException("Loading data from local file failed for "+objID+" "+type.getTypeName()+" failed.",
-					e);
-		}
-		finally{
-			try
-			{
-				ois.close();
-				fis.close();
-			} catch (IOException e)
-			{
-				throw new DataIOException("Loading data from local file failed for "+objID+" "+type.getTypeName()+" failed.",
-						e);
-			}
-			
-		}
-		
-		return result;
-	}
+
 	@Override
-	public byte[] loadData(MappingInfo mapping) throws DataIOException {
-		byte[] result = null;
-		File datafile = new File(this.getFileName(m_srcprefix,mapping));
+	public List<DataSeries> loadData(String objID, Object mapping, ADataAdapter adapter) throws DataIOException
+	{
+		if( !( adapter instanceof com.anthony.playstation.dataAdapter.protoBuf.ProtoBufAdapter) )
+			throw new DataIOException("Invalid Adapter instance !");
+		
+		UniformType type = (UniformType)mapping;
+		
+		String fileName = m_srcprefix+ "/" +objID+"_"+type.getTypeName();
+		File datafile = new File(fileName);
+		List<DataSeries> resultList = null;
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream( datafile );
@@ -157,7 +60,7 @@ public class LocalFileProxy extends ADataIOProxy{
 	          
 	        fis.close();  
 	          
-	       result = resultOut.toByteArray();
+	        resultList = adapter.loadSeries(null, resultOut.toByteArray());
 			
 		} catch (FileNotFoundException e) {
 			return null;
@@ -171,16 +74,19 @@ public class LocalFileProxy extends ADataIOProxy{
 				{
 				}
 			}
-			throw new DataIOException("Loading data from local file failed for "+mapping.toString(), e);
+			throw new DataIOException("Loading data from local file failed for "+fileName, e);
+		} catch (DataAdapterException e)
+		{
+			throw new DataIOException("Loading data from local file failed for "+fileName, new Exception(e));
 		}
-		return result;
+		return resultList;
 	}
 
 	@Override
-	public int saveData(MappingInfo mapping, byte[] content)
-			throws DataIOException {
-		
-		File datafile = new File(this.getFileName(m_tarprefix,mapping));
+	public int saveData(ADataAdapter adapter, DataSeries series) throws DataIOException
+	{
+		String fileName = m_tarprefix+"/"+series.getFileName();
+		File datafile = new File(fileName);
 		if(datafile.exists())
 			datafile.delete();
 		FileOutputStream fos = null;
@@ -189,11 +95,13 @@ public class LocalFileProxy extends ADataIOProxy{
 			datafile.createNewFile();
 			fos = new FileOutputStream(datafile, true );
 			bos = new BufferedOutputStream(fos);
-			bos.write(content);
+			bos.write(adapter.serializeSeries(series));
 			bos.flush();
-			//fos.flush();
 		} catch (IOException e) {
-			throw new DataIOException("Saving data to local file failed for "+mapping.toString(), e);
+			throw new DataIOException("Saving data to local file failed for "+fileName, e);
+		} catch (DataAdapterException e)
+		{
+			throw new DataIOException("Failed to serilize data "+e.getMessage(), new Exception(e));
 		}
 		finally{
 			try{
@@ -201,11 +109,10 @@ public class LocalFileProxy extends ADataIOProxy{
 				fos.close();
 			} catch( IOException e )
 			{
-				throw new DataIOException("Closing local file failed for "+mapping.toString(), e);
+				throw new DataIOException("Closing local file failed for "+fileName, e);
 			}
 		}
 		
 		return 0;
 	}
-
 }

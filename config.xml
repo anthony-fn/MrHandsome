@@ -5,10 +5,12 @@
 <entry key="DataTarge">LocalFile</entry>
 <entry key="TSDB_Source">http://tswriter81/Inte-config/ts_proxy.xml</entry>
 <entry key="TSDB_Target">http://tsdevwriter81/Inte-config/ts_proxy.xml</entry>
-<entry key="LocalFile_Source">Data</entry>
+<entry key="LocalFile_Source">DataStorage</entry>
 <entry key="LocalFile_Target">DataStorage</entry>
-<entry key="LocalThreadNum">10</entry>
+<entry key="LocalThreadNum">20</entry>
 <entry key="LocalThreadMaxWait">5000</entry>
 <entry key="MaxJobInBatch">10000</entry>
 
+<entry key="TSDBMappingtoUniform">DataDefination/TSDBToUniform.xml</entry>
+<entry key="UniformTypeDB">DataDefination/UniformDataTypes.xml</entry>
 </properties>

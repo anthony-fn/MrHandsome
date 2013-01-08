@@ -2,13 +2,12 @@ package com.anthony.playstation.executor;
 
 import java.util.List;
 
-import com.anthony.playstation.TSDBToUniformDB;
-import com.anthony.playstation.data.DataSeries;
-import com.anthony.playstation.data.MappingInfo;
+import com.anthony.playstation.data.dataseries.DataSeries;
+import com.anthony.playstation.data.mapping.MappingInfo;
 import com.anthony.playstation.dataAPI.ADataIOProxy;
+import com.anthony.playstation.dataAdapter.ADataAdapter;
 import com.anthony.playstation.dataAdapter.TSDB.TSDBDataAdapter;
-import com.anthony.playstation.exceptions.ConfigurationException;
-import com.anthony.playstation.exceptions.DataAdapterException;
+import com.anthony.playstation.dataAdapter.protoBuf.ProtoBufAdapter;
 import com.anthony.playstation.exceptions.DataDumpException;
 import com.anthony.playstation.exceptions.DataIOException;
 import com.anthony.playstation.exceptions.DataProxyOperationException;
@@ -17,24 +16,27 @@ public class DataDumpJob extends AJob
 {
 	private ADataIOProxy m_source = null;
 	private ADataIOProxy m_target = null;
-	private MappingInfo m_mapping = null;
-	private boolean m_finished = false;
+	private Object m_mapping = null;
+	private ADataAdapter m_adapterSrc = null;
+	private ADataAdapter m_adapterTar = null;
 	
-	public DataDumpJob( ADataIOProxy source, ADataIOProxy target, MappingInfo mapping ) throws DataProxyOperationException
+	public DataDumpJob( ADataIOProxy source, ADataIOProxy target, Object mapping) throws DataProxyOperationException
 	{
 		m_source = source;
 		m_target = target;		
 		m_mapping = mapping;
-	}
-	public int execute()
-	{
-		return 0;
+		m_adapterSrc = new TSDBDataAdapter();
+		m_adapterTar = new ProtoBufAdapter();
 	}
 	
-	@Override
-	public boolean isFinished()
+	public DataDumpJob( ADataIOProxy source, ADataIOProxy target, Object mapping, 
+			ADataAdapter adapterSrc, ADataAdapter adapterTar ) throws DataProxyOperationException
 	{
-		return m_finished;
+		m_source = source;
+		m_target = target;		
+		m_mapping = mapping;
+		m_adapterSrc = adapterSrc;
+		m_adapterTar = adapterTar;
 	}
 	
 	public Integer call() throws Exception
@@ -42,14 +44,13 @@ public class DataDumpJob extends AJob
 		int result = 0;
 		try
 		{
-			byte [] content = m_source.loadData(m_mapping);
-			//result = m_target.saveData(m_mapping, content);
-			List<DataSeries> data = TSDBDataAdapter.loadSeries(TSDBToUniformDB.getUniformType(m_mapping.getTsType(), m_mapping.getMapping()), 
-					m_mapping, content);
+			if( !(m_mapping instanceof com.anthony.playstation.data.mapping.MappingInfo) )
+				throw new Exception( new DataDumpException("Invalid data source. Right now we only have TSDB as data source"));
+			List<DataSeries> data = m_source.loadData(((MappingInfo)m_mapping).getObjectId(), m_mapping, m_adapterSrc);
 			
 			for( DataSeries series : data )
 			{
-				result = m_target.saveUniformedData(series);
+				result = m_target.saveData(m_adapterTar, series);
 			}
 			
 			if( result != 0 )
@@ -59,14 +60,9 @@ public class DataDumpJob extends AJob
 		} catch (DataIOException e)
 		{
 			throw new Exception (new DataDumpException("Dump data failed !", new Exception(e) ) );
-		} catch (DataAdapterException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		m_finished = true;
+		this.hasFinished();
 		return result;
 	}
+
 }

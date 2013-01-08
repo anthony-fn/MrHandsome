@@ -4,6 +4,5 @@ import com.anthony.playstation.exceptions.JobOperationException;
 
 public abstract class AJobFactory
 {
-	public abstract void LoadFactory( Object obj );
-	public abstract AJob getOneJob()throws JobOperationException;
+	public abstract AJob getOneJob( Object obj )throws JobOperationException;
 }

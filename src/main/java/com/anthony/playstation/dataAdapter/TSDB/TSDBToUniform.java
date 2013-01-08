@@ -1,9 +1,9 @@
-package com.anthony.playstation;
+package com.anthony.playstation.dataAdapter.TSDB;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import com.anthony.playstation.data.MappingType;
+import com.anthony.playstation.data.mapping.MappingType;
 import com.anthony.playstation.exceptions.ConfigurationException;
 
 public class TSDBToUniform
@@ -11,13 +11,15 @@ public class TSDBToUniform
 	private int m_tstype = 0;
 	private String m_name = "";
 	private MappingType m_mapping = MappingType.MappingBaseObject;
+	private String m_className = "";
 	private List<Integer> m_list = new LinkedList<Integer>();
 	
-	public TSDBToUniform( int tstype, String name, MappingType type )
+	public TSDBToUniform( int tstype, String name, MappingType type, String className )
 	{
 		m_tstype = tstype;
 		setName(name);
 		setMappingType(type);
+		setClassName(className);
 	}
 	
 	public void addUniformType( int i ) throws ConfigurationException
@@ -61,5 +63,15 @@ public class TSDBToUniform
 	public void setMappingType(MappingType m_mapping)
 	{
 		this.m_mapping = m_mapping;
+	}
+
+	public String getClassName()
+	{
+		return m_className;
+	}
+
+	public void setClassName(String m_className)
+	{
+		this.m_className = m_className;
 	}
 }

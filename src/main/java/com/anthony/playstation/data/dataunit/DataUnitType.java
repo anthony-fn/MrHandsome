@@ -1,6 +1,7 @@
-package com.anthony.playstation.data;
+package com.anthony.playstation.data.dataunit;
 
-public enum DataUnitType {
+public enum DataUnitType
+{
 	DefaultUnit,
 	ValueUnit,
 	StringUnit;

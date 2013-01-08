@@ -7,9 +7,9 @@ import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.anthony.playstation.TSDBToUniform;
-import com.anthony.playstation.TSDBToUniformDB;
-import com.anthony.playstation.data.MappingType;
+import com.anthony.playstation.data.mapping.MappingType;
+import com.anthony.playstation.dataAdapter.TSDB.TSDBToUniform;
+import com.anthony.playstation.dataAdapter.TSDB.TSDBToUniformDB;
 import com.anthony.playstation.exceptions.ConfigurationException;
 
 public class TSDBToUniformDBTest
@@ -25,7 +25,7 @@ public class TSDBToUniformDBTest
 	{
 		try
 		{
-			TSDBToUniformDB.load("DataDefination/TSDBToUniform.xml");
+			//TSDBToUniformDB.load("DataDefination/TSDBToUniform.xml");
 			
 			TSDBToUniform uni = TSDBToUniformDB.getUniformType(2, MappingType.MappingCorporateActionAdjustment);
 			
