@@ -40,8 +40,6 @@ public class DataSeries implements Serializable{
 	{
 		if( src == null )
 			return false;
-		int a = m_list.size();
-		int b = src.getUnitList().size();
 		if( !m_name.equals(src.getSeriesName()))
 			return false;
 		else if( !m_uniType.equals(src.getUniType()) )

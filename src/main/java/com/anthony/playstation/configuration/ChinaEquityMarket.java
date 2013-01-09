@@ -1,3 +1,13 @@
+/**   
+* @Title: 		ChinaEquityMarket.java 
+* @Package 		com.anthony.playstation.configuration 
+* @Description:  
+* 				The defination for class ChinaEquityMarket.
+* @author 		Anthony Fan
+* @date 		2013-1-9 
+* @time 		0:53:49 
+* @version 		V 1.0   
+*/
 package com.anthony.playstation.configuration;
 
 import java.io.BufferedReader;
@@ -7,33 +17,63 @@ import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 
 import com.anthony.playstation.exceptions.ConfigurationException;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ChinaEquityMarket is a DB like class.
+ * It contains all the members in Shanghai and Shenzhen Socket exchange market of China.
+ */
 public class ChinaEquityMarket
 {
-	private static final Logger logger = Logger.getLogger(ChinaEquityMarket.class);
+	
+	/** A list that contains all the members in China socket exchange market. */
 	private static List<ChinaEquity> m_members= new LinkedList<ChinaEquity>(); 
+	
+	/** If the List of ChinaEquity has been initialized. */
 	private static boolean m_inited = false;
+	
+	/** ChinaEquity numbers in the list. */
 	private static int m_number = 0;
 	
 	
+	/**
+	 * Instantiates a ChinaEquity list.
+	 * 
+	 * @param fileName
+	 *            The path of the configuration file.
+	 * @throws ConfigurationException
+	 *            Any kinds of exception while loading/parsing.
+	 */
 	public ChinaEquityMarket ( String fileName ) throws ConfigurationException
 	{
 		if( m_inited )
 			return;
 		initMembers(fileName);
-		
-		ReportSelf();
 	}
 	
+	/**
+	 * Gets the member list.
+	 * 
+	 * @return ChinaEquity member list
+	 */
 	public List<ChinaEquity> getMemberList()
 	{
 		return m_members;
 	}
+	
+	/**
+	 * Inits the members.
+	 * 
+	 * @param fileName
+	 *            The path of the configuration file.
+	 * @throws ConfigurationException
+	 *            Any kinds of exception while loading/parsing.
+	 */
 	private void initMembers( String fileName ) throws ConfigurationException
 	{
+		//The file should lie in the resource folder
 		InputStream stream = ChinaEquityMarket.class.getClassLoader().getResourceAsStream(fileName);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 		
@@ -43,6 +83,10 @@ public class ChinaEquityMarket
 		{
 			while( (line = reader.readLine()) != null )
 			{
+				//Ignore the lines started with "#" in the configuration file.
+				if( line.startsWith("#"))
+					continue;
+				
 				String[] temp = line.split("\t");
 				m_members.add(new ChinaEquity(temp[0], temp[1], temp[2]));
 			}
@@ -64,31 +108,21 @@ public class ChinaEquityMarket
 		m_inited = true;
 	}
 	
+	/**
+	 * Reset.
+	 */
 	public void Reset()
 	{
 		m_members.clear();
+		m_number = m_members.size();
 		m_inited = false;
 	}
 	
-	private void ReportSelf()
-	{
-		logger.info("Init result for China Equity Market: ");
-		logger.info("Security number: " + m_members.size());
-	}
-	
-	public void Finalize()
-	{
-		if( !m_inited )
-			return;
-		
-		for( ChinaEquity unit : m_members )
-		{
-			if ( unit.getSecurityID().startsWith("1"))
-			{
-				logger.info(unit.getSecurityname()+"\t"+unit.getSecurityID());
-			}
-		}
-	}
+	/**
+	 * Gets the equity number.
+	 * 
+	 * @return the equity number
+	 */
 	public int getEquityNumber()
 	{
 		return m_number;
