@@ -96,7 +96,7 @@ public class MappingInfo {
 			StringBuilder sb = new StringBuilder();
 			
 			//tsType
-			sb.append(";tsType:"+tsType);
+			sb.append("tsType:"+tsType);
 			//objectId
 			sb.append(";objectId:"+objectId);
 			//classificationMethod

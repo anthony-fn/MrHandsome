@@ -46,9 +46,10 @@ public class ProtoBufAdapter extends ADataAdapter
 	{
 		DataSeries result = null;
 		
-		result = new DataSeries(valueSeries.getName());
-		result.setPerformanceID(valueSeries.getId());
-		result.setUniType(ProtoBufAdapter.uniformTypeFromPro(valueSeries.getUniformType()));
+		
+		result = new DataSeries(ProtoBufAdapter.uniformTypeFromPro(valueSeries.getUniformType()),
+				valueSeries.getId());
+		
 		result.setUnitList(ProtoBufAdapter.valueFromPro(valueSeries));
 		return result;
 	}
@@ -57,7 +58,6 @@ public class ProtoBufAdapter extends ADataAdapter
 	{
 		ValueDataSeriesForProto.Builder valueSeries = ValueDataSeriesForProto.newBuilder();
 		valueSeries.setId(series.getPerformanceID());
-		valueSeries.setName(series.getSeriesName());
 		
 		UniformTypeForProto.Builder uniformType = UniformTypeForProto.newBuilder();
 		UniformType type = series.getUniType();
@@ -73,7 +73,7 @@ public class ProtoBufAdapter extends ADataAdapter
 			ValueUnitForProto.Builder valueUnit = ValueUnitForProto.newBuilder();
 			
 			valueUnit.setDate(unit.getDateString());
-			valueUnit.setValue(((ValueDataUnit)unit).getValue());
+			valueUnit.setValue((Float)((ValueDataUnit)unit).getValue());
 			
 			valueSeries.addValueList(valueUnit.build());
 		}

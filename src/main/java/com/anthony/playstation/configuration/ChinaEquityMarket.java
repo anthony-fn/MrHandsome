@@ -20,7 +20,6 @@ import java.util.List;
 
 import com.anthony.playstation.exceptions.ConfigurationException;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ChinaEquityMarket is a DB like class.
  * It contains all the members in Shanghai and Shenzhen Socket exchange market of China.

@@ -47,7 +47,7 @@ public class DumpResultTest
 			
 			tsdb.closeFactory();
 			local.closeFactory();
-			assertEquals( true, temp.get(0).compare(temp1));
+			assertEquals( true, temp.get(0).equals(temp1));
 			
 		} catch (DataProxyOperationException e)
 		{

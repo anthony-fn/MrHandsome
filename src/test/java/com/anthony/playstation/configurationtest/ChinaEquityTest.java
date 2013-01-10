@@ -44,7 +44,7 @@ public class ChinaEquityTest {
 	/**
 	 * Test method for {@link com.anthony.playstation.configuration.ChinaEquity#getPerformanceID()}.
 	 */
-	@Test
+	
 	public void testGetPerformanceID() {
 		assertEquals("Some",m_equity.getPerformanceID());
 		m_success++;
@@ -53,7 +53,7 @@ public class ChinaEquityTest {
 	/**
 	 * Test method for {@link com.anthony.playstation.configuration.ASecurity#getSecurityname()}.
 	 */
-	@Test
+	
 	public void testGetSecurityname() {
 		assertEquals("Mr", m_equity.getSecurityname());
 		m_success++;
@@ -62,7 +62,7 @@ public class ChinaEquityTest {
 	/**
 	 * Test method for {@link com.anthony.playstation.configuration.ASecurity#setSecurityname(java.lang.String)}.
 	 */
-	@Test
+	
 	public void testSetSecurityname() {
 		m_equity.setSecurityname("MrAfterSet");
 		assertEquals("MrAfterSet", m_equity.getSecurityname());
@@ -72,7 +72,7 @@ public class ChinaEquityTest {
 	/**
 	 * Test method for {@link com.anthony.playstation.configuration.ASecurity#getSecurityID()}.
 	 */
-	@Test
+	
 	public void testGetSecurityID() {
 		assertEquals("Hand", m_equity.getSecurityID());
 		m_success++;
@@ -81,11 +81,22 @@ public class ChinaEquityTest {
 	/**
 	 * Test method for {@link com.anthony.playstation.configuration.ASecurity#setSecurityID(java.lang.String)}.
 	 */
-	@Test
+	
 	public void testSetSecurityID() {
 		m_equity.setSecurityID("HandAfterSet");
 		assertEquals("HandAfterSet", m_equity.getSecurityID());
 		m_success++;
+	}
+	
+	@Test
+	public void test()
+	{
+		ChinaEquityTest test = new ChinaEquityTest();
+		test.testGetPerformanceID();
+		test.testGetSecurityname();
+		test.testSetSecurityname();
+		test.testGetSecurityID();
+		test.testSetSecurityID();
 	}
 
 }

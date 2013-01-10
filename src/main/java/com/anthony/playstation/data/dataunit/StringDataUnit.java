@@ -1,3 +1,13 @@
+/**   
+* @Title: 		StringDataUnit.java
+* @Package 		com.anthony.playstation.data.dataunit
+* @Description: 
+* 				Contains the class StringDataUnit
+* @author 		Anthony Fan
+* @date 		2013-1-10 
+* @time 		11:37:14
+* @version 		V 1.0   
+*/
 package com.anthony.playstation.data.dataunit;
 
 import java.util.Calendar;
@@ -5,13 +15,23 @@ import java.util.Calendar;
 import com.anthony.playstation.data.ADataUnit;
 import com.anthony.playstation.exceptions.InvalidDataUnitException;
 
+
+/**
+ * The Class StringDataUnit, which is a derived class of ADataUnit.
+ * 
+ * simply a pair of <Calendar, String>.
+ */
 public class StringDataUnit extends ADataUnit{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5006123960266863949L;
+
+	/** The String value. */
 	private String m_value = "";
 	
+	/**
+	 * Instantiates a new string data unit.
+	 *
+	 * @param cal Calendar. Only keeps the data yyyy-MM-dd.
+	 * @param value String
+	 */
 	public StringDataUnit( Calendar cal, String value )
 	{
 		this.setCalendar(cal);
@@ -19,19 +39,28 @@ public class StringDataUnit extends ADataUnit{
 		this.setType(DataUnitType.StringUnit);
 	}
 
+	/**
+	 * Gets the String value.
+	 *
+	 * @return String value
+	 */
+	@Override
 	public String getValue() {
 		return m_value;
 	}
 
+	/**
+	 * Sets the String value.
+	 *
+	 * @param The new String value
+	 */
 	public void setValue(String m_value) {
 		this.m_value = m_value;
 	}
 
-	@Override
-	public Object getUniverseValue() {
-		return (Object)this.getValue();
-	}
-
+	/* (non-Javadoc)
+	 * @see com.anthony.playstation.data.ADataUnit#compareValue(com.anthony.playstation.data.ADataUnit)
+	 */
 	@Override
 	public int compareValue(ADataUnit unit) throws InvalidDataUnitException {
 		if( unit.getType() != this.getType())
@@ -45,10 +74,25 @@ public class StringDataUnit extends ADataUnit{
 		return m_value.compareTo( ((StringDataUnit)unit).getValue());
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.anthony.playstation.data.ADataUnit#print()
+	 */
 	@Override
 	public void print()
 	{
 		System.out.println(this.getCalendar().toString()+"\t"+m_value);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.anthony.playstation.data.ADataUnit#setValue()
+	 */
+	@Override
+	public void setValue(Object value) throws InvalidDataUnitException
+	{
+		if(!( value instanceof java.lang.String ) )
+			throw new InvalidDataUnitException("Assiging a non-String value to StringDataUnit .");
+		
+		m_value = (String)value;
 	}
 	
 }

@@ -71,7 +71,7 @@ public class PlayStation
 			
 			int totalNum = list.size();
 			int index = 0;
-			AJobBatch jobBatch = new FixedJobBatch(totalNum*2);
+			AJobBatch jobBatch = new FixedJobBatch(totalNum*3);
 			for( ChinaEquity equity : list )
 			{
 				++index;
@@ -91,6 +91,13 @@ public class PlayStation
 				
 				mappingCor.setMapping(MappingType.MappingCorporateActionAdjustment);
 				jobBatch.pushOneJob(dumpFactory.getOneJob(mappingCor));
+				
+				MappingInfo mappingDiv = new MappingInfo();
+				mappingDiv.setObjectId(equity.getPerformanceID());
+				mappingDiv.setTsType(712);
+				mappingDiv.setMapping(MappingType.MappingBaseObject);
+				jobBatch.pushOneJob(dumpFactory.getOneJob(mappingDiv));
+				
 				logger.info("Data dumped "+index+"/"+totalNum);
 			}
 

@@ -8,4 +8,5 @@
 	<Type id = "6" type = "ValueUnit">SplitedHighMarketPrice</Type>
 	<Type id = "7" type = "ValueUnit">SplitedLowMarketPrice</Type>
 	<Type id = "8" type = "ValueUnit">SplitedCloseMarketPrice</Type>
+	<Type id = "9" type = "ValueUnit">DivendendPerShareOverOneYear</Type>
 </UniformTypes>

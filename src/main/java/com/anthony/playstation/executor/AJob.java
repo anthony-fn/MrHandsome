@@ -15,4 +15,6 @@ public abstract class AJob implements Callable<Integer>
 	{
 		return m_finished;
 	}
+	
+	public abstract boolean isFailed();
 }

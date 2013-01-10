@@ -1,3 +1,12 @@
+/**   
+* @Title: 		UniformTypeDB.java
+* @Package 		com.anthony.playstation.data.dataseries
+* @Description: 
+* @author 		Anthony Fan
+* @date 		2013-1-9 
+* @time 		17:13:50
+* @version 		V 1.0   
+*/
 package com.anthony.playstation.data.dataseries;
 
 import java.io.IOException;
@@ -17,12 +26,25 @@ import org.xml.sax.SAXException;
 
 import com.anthony.playstation.exceptions.ConfigurationException;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class UniformTypeDB.
+ */
 public abstract class UniformTypeDB
 {
+	
+	/** The m_types. */
 	private static Map<Integer, UniformType> m_types = new HashMap<Integer, UniformType>();
+	
+	/** The m_inited. */
 	private static boolean m_inited = false;
 	
 	
+	/**
+	 * Load.
+	 *
+	 * @throws ConfigurationException the configuration exception
+	 */
 	private synchronized static void load() throws ConfigurationException
 	{
 		String file = ConfigManager.getInstance().getString("UniformTypeDB");
@@ -68,6 +90,13 @@ public abstract class UniformTypeDB
 		
 	}
 	
+	/**
+	 * Gets the type.
+	 *
+	 * @param type the type
+	 * @return the type
+	 * @throws ConfigurationException the configuration exception
+	 */
 	public static UniformType getType( int type ) throws ConfigurationException
 	{
 		if( !m_inited )

@@ -21,12 +21,7 @@ public class ChinaEquityMarketTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		logger.info("*****Start to test class ChinaEquityMarketTest*****");
-		try {
-			m_market = new ChinaEquityMarket("MarketDescriptions/ChinaEquity.data");
-			System.out.println(m_market.getEquityNumber());
-		} catch (ConfigurationException e) {
-			fail(e.getMessage());
-		}
+		
 	}
 
 	@AfterClass
@@ -35,14 +30,18 @@ public class ChinaEquityMarketTest {
 		logger.info("*****Finished testing class ChinaEquityMarketTest*****");
 	}
 
-	@Test
+	
 	public void testChinaEquityMarket() {
-		
+		try {
+			m_market = new ChinaEquityMarket("MarketDescriptions/ChinaEquity.data");
+		} catch (ConfigurationException e) {
+			fail(e.getMessage());
+		}
 		assertNotNull(m_market);
 		m_success ++;
 	}
 
-	@Test
+	
 	public void testGetMemberList() {
 		List<ChinaEquity> list = m_market.getMemberList();
 		
@@ -50,20 +49,29 @@ public class ChinaEquityMarketTest {
 		m_success ++;
 	}
 
-	@Test
+	
 	public void testGetEquityNumber() {
-		System.out.println("aaa"+m_market.getEquityNumber());
 		assertEquals(2575, m_market.getEquityNumber());
 		m_success++;
 	}
 	
-	@Test
+	
 	public void testReset() {
-		System.out.println("testRest");
 		m_market.Reset();
 		assertNotNull(m_market);
 		assertEquals(0, m_market.getEquityNumber());
 		m_success++;
+	}
+	
+	@Test
+	public void test()
+	{
+		ChinaEquityMarketTest test = new ChinaEquityMarketTest();
+		
+		test.testChinaEquityMarket();
+		test.testGetMemberList();
+		test.testGetEquityNumber();
+		test.testReset();
 	}
 	
 }

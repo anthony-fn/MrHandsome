@@ -1,6 +1,15 @@
+/**   
+* @Title: 		DataSeries.java
+* @Package 		com.anthony.playstation.data.dataseries
+* @Description: 
+* 				Contains class DataSeries
+* @author 		Anthony Fan
+* @date 		2013-1-9 
+* @time 		11:02:14
+* @version 		V 1.0   
+*/
 package com.anthony.playstation.data.dataseries;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
@@ -10,37 +19,51 @@ import com.anthony.playstation.data.ADataUnit;
 import com.anthony.playstation.data.dataunit.DataUnitType;
 import com.anthony.playstation.exceptions.InvalidDataUnitException;
 
-public class DataSeries implements Serializable{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5760160401423144772L;
-
+/**
+ * The Class DataSeries is the main data format in MrHandSome.
+ * It's main part is a list of <data, value> pair.
+ */
+public class DataSeries{
 	
+	/** The list which contains all the value. */
 	private List<ADataUnit> m_list = new LinkedList<ADataUnit>();
-	private String m_name = "";
+	
+	/** The ObjectID.
+	 * 	For ChinaEquity, it's performanceID in TSDB.
+	 *  */
 	private String m_objID = "";
+	
+	/** UniformType of this series. */
 	private UniformType m_uniType = null;
+	
+	/** Start date of the records. */
 	private Date m_startDate = null;
+	
+	/** End date of the records. */
 	private Date m_endDate = null;
 	
+	/**
+	 * Instantiates an empty DataSeries with basic data type information.
+	 *
+	 * @param type UniformType
+	 * @param perID String
+	 */
 	public DataSeries( UniformType type, String perID )
 	{
 		m_uniType = type;
-		m_name = m_uniType.getTypeName();
 		m_objID = perID;
 	}
 	
-	public DataSeries( String name )
-	{
-		m_name = name;
-	}
-	
-	public boolean compare( DataSeries src ) throws InvalidDataUnitException
+	/**
+	 * Compare if two DataSeries have the same values.
+	 *
+	 * @param src DataSeries
+	 * @return true, if two DataSeries are equal
+	 * @throws InvalidDataUnitException the invalid data unit exception
+	 */
+	public boolean equals( DataSeries src ) throws InvalidDataUnitException
 	{
 		if( src == null )
-			return false;
-		if( !m_name.equals(src.getSeriesName()))
 			return false;
 		else if( !m_uniType.equals(src.getUniType()) )
 			return false;
@@ -51,8 +74,7 @@ public class DataSeries implements Serializable{
 		
 		for( int i = 0; i < m_list.size(); i ++ )
 		{
-			System.out.println("Compare : "+(i+1)+"/"+m_list.size());
-			if( 0 != m_list.get(i).compareData(src.getUnitList().get(i)) )
+			if( 0 != m_list.get(i).compareDate(src.getUnitList().get(i)) )
 				return false;
 			
 			if( 0 != m_list.get(i).compareValue(src.getUnitList().get(i)) )
@@ -62,6 +84,12 @@ public class DataSeries implements Serializable{
 		return true;
 	}
 	
+	/**
+	 * Checks if a DataUnit is the same with the data units in this DataSeries
+	 *
+	 * @param unit the unit
+	 * @return true, if is valid type
+	 */
 	private boolean isValidType( ADataUnit unit )
 	{
 		if( m_list.size() == 0 )
@@ -70,27 +98,35 @@ public class DataSeries implements Serializable{
 		return m_list.get(0).getType() == unit.getType();
 	}
 	
-	public void print()
-	{
-		System.out.println( m_name);
-		
-		for( ADataUnit data : m_list )
-		{
-			data.print();
-		}
-	}
-	
+	/**
+	 * Gets the file name in local storage.
+	 * 
+	 * Object+"_"+UniformType.getName()
+	 *
+	 * @return the file name
+	 */
 	public String getFileName()
 	{
 		StringBuilder sb = new StringBuilder();
-		sb.append(m_objID+"_"+m_name);
+		sb.append(m_objID+"_"+m_uniType.getTypeName());
 		
 		return sb.toString();
 	}
 
 	
+	/**
+	 * Add a new DataUnit into current DataSeries.
+	 * 
+	 * Conditions:
+	 * 1. The new DataUnit must have the same type.
+	 * 2. If the Date value in the new DataUnit is already in DataSeries, an exception would be thrown.
+	 *
+	 * @param unit ADataUnit.
+	 * @throws InvalidDataUnitException the invalid data unit exception
+	 */
 	public void addUnit( ADataUnit unit ) throws InvalidDataUnitException
 	{
+		//new unit shoudl have the same UniformType.
 		if( !this.isValidType(unit) )
 		{
 			StringBuilder sb = new StringBuilder();
@@ -100,24 +136,27 @@ public class DataSeries implements Serializable{
 		}
 		if( m_list.size() == 0 )
 		{
+			//If the DataSeries is still empty.
 			m_list.add(unit);
 			return;
 		}
+		
 		int index = 0;
 		for( ADataUnit tempunit : m_list )
 		{
-			if(tempunit.compareData(unit) <0 )
+			if(tempunit.compareDate(unit) <0 )
 			{
 				m_list.add(index, unit);
 				return;
 			}
-			else if ( tempunit.compareData(unit) > 0 )
+			else if ( tempunit.compareDate(unit) > 0 )
 			{
 				index++;
 				continue;
 			}
 			else
 			{
+				// If the Date value in new DataUnit has already been in current DataSeries, throw an exception.
 				StringBuilder sb = new StringBuilder();
 				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
 				
@@ -129,6 +168,11 @@ public class DataSeries implements Serializable{
 		}
 	}
 
+	/**
+	 * Gets the value type.
+	 *
+	 * @return DataUnitType
+	 */
 	public DataUnitType getValueType()
 	{
 		if( m_list.size() == 0 )
@@ -136,58 +180,105 @@ public class DataSeries implements Serializable{
 		
 		else return m_list.get(0).getType();
 	}
-	
-	public String getSeriesName() {
-		return m_name;
-	}
 
-	public void setSeriesName(String m_name) {
-		this.m_name = m_name;
-	}
-
+	/**
+	 * Gets the unit list.
+	 *
+	 * @return the unit list
+	 */
 	public List<ADataUnit> getUnitList() {
 		return m_list;
 	}
 
+	/**
+	 * Sets the unit list.
+	 *
+	 * @param m_list the new unit list
+	 */
 	public void setUnitList(List<ADataUnit> m_list) {
 		this.m_list = m_list;
 	}
 
+	/**
+	 * Gets the start date.
+	 *
+	 * @return the start date
+	 */
 	public Date getStartDate() {
 		return m_startDate;
 	}
 
+	/**
+	 * Sets the start date.
+	 *
+	 * @param m_startDate the new start date
+	 */
 	public void setStartDate(Date m_startDate) {
 		this.m_startDate = m_startDate;
 	}
 
+	/**
+	 * Gets the end date.
+	 *
+	 * @return the end date
+	 */
 	public Date getEndDate() {
 		return m_endDate;
 	}
 
+	/**
+	 * Sets the end date.
+	 *
+	 * @param m_endDate the new end date
+	 */
 	public void setEndDate(Date m_endDate) {
 		this.m_endDate = m_endDate;
 	}
 
+	/**
+	 * Gets the series size.
+	 *
+	 * @return the series size
+	 */
 	public int getSeriesSize() {
 		return m_list.size();
 	}
 
+	/**
+	 * Gets the uni type.
+	 *
+	 * @return the uni type
+	 */
 	public UniformType getUniType()
 	{
 		return m_uniType;
 	}
 
+	/**
+	 * Sets the uni type.
+	 *
+	 * @param m_uniType the new uni type
+	 */
 	public void setUniType(UniformType m_uniType)
 	{
 		this.m_uniType = m_uniType;
 	}
 
+	/**
+	 * Gets the performance id.
+	 *
+	 * @return the performance id
+	 */
 	public String getPerformanceID()
 	{
 		return m_objID;
 	}
 
+	/**
+	 * Sets the performance id.
+	 *
+	 * @param m_objID the new performance id
+	 */
 	public void setPerformanceID(String m_objID)
 	{
 		this.m_objID = m_objID;

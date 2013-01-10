@@ -27,7 +27,7 @@ public class ChinaEquityDataDescriptionTest {
 		logger.info("*****Finished testing class ChinaEquityDataDescriptionTest*****");
 	}
 
-	@Test
+	
 	public void testChinaEquityDataDescription() {	
 		try {
 			m_description = new ChinaEquityDataDescription("DataDescriptions/TSDB/ChinaEquity.tsdbtypes");
@@ -38,17 +38,27 @@ public class ChinaEquityDataDescriptionTest {
 		m_success++;
 	}
 
-	@Test
+	
 	public void testGetDataTypeNumber() {
 		assertEquals(1, m_description.getDataTypeNumber());
 		m_success++;
 	}
 	
-	@Test
+	
 	public void testReset() {
 		m_description.Reset();
 		assertNotNull(m_description);
 		assertEquals(0, m_description.getDataTypeNumber());
 		m_success++;
+	}
+	
+	@Test
+	public void test()
+	{
+		ChinaEquityDataDescriptionTest test = new ChinaEquityDataDescriptionTest();
+		
+		test.testChinaEquityDataDescription();
+		test.testGetDataTypeNumber();
+		test.testReset();
 	}
 }

@@ -2,6 +2,8 @@ package com.anthony.playstation.executor;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.anthony.playstation.data.dataseries.DataSeries;
 import com.anthony.playstation.data.mapping.MappingInfo;
 import com.anthony.playstation.dataAPI.ADataIOProxy;
@@ -19,6 +21,8 @@ public class DataDumpJob extends AJob
 	private Object m_mapping = null;
 	private ADataAdapter m_adapterSrc = null;
 	private ADataAdapter m_adapterTar = null;
+	private boolean m_failed = false;
+	private static final Logger logger = Logger.getLogger(DataDumpJob.class);
 	
 	public DataDumpJob( ADataIOProxy source, ADataIOProxy target, Object mapping) throws DataProxyOperationException
 	{
@@ -39,13 +43,29 @@ public class DataDumpJob extends AJob
 		m_adapterTar = adapterTar;
 	}
 	
+	public MappingInfo getMapping()
+	{
+		return (MappingInfo)m_mapping;
+	}
+	
+	@Override
+	public boolean isFailed()
+	{
+		if( !this.isFinished())
+		{
+			return false;
+		}
+		
+		return m_failed;
+	}
+	
 	public Integer call() throws Exception
 	{
 		int result = 0;
 		try
 		{
-			if( !(m_mapping instanceof com.anthony.playstation.data.mapping.MappingInfo) )
-				throw new Exception( new DataDumpException("Invalid data source. Right now we only have TSDB as data source"));
+			//if( !(m_mapping instanceof com.anthony.playstation.data.mapping.MappingInfo) )
+			//	throw new Exception( new DataDumpException("Invalid data source. Right now we only have TSDB as data source"));
 			List<DataSeries> data = m_source.loadData(((MappingInfo)m_mapping).getObjectId(), m_mapping, m_adapterSrc);
 			
 			for( DataSeries series : data )
@@ -55,13 +75,18 @@ public class DataDumpJob extends AJob
 			
 			if( result != 0 )
 			{
+				m_failed = true;
 				throw new Exception(new DataDumpException("Save data with return "+result));
 			}
 		} catch (DataIOException e)
 		{
+			m_failed = true;
+			logger.error(e.getMessage());
 			throw new Exception (new DataDumpException("Dump data failed !", new Exception(e) ) );
 		}
-		this.hasFinished();
+		finally{
+			this.hasFinished();
+		}
 		return result;
 	}
 
