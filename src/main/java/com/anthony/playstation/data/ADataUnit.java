@@ -80,7 +80,13 @@ public abstract class ADataUnit{
 		}
 	}
 
-	protected void setType( DataUnitType type )
+	/**
+	 * Set the DataUnitType value of ADataUnit.
+	 * Should not be called directly except in the class constructors.
+	 * @param type
+	 * @throws InvalidDataUnitException 
+	 */
+	protected void setType( DataUnitType type ) throws InvalidDataUnitException
 	{
 		m_type = type;
 	}

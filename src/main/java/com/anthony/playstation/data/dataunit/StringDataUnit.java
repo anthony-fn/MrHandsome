@@ -31,12 +31,17 @@ public class StringDataUnit extends ADataUnit{
 	 *
 	 * @param cal Calendar. Only keeps the data yyyy-MM-dd.
 	 * @param value String
+	 * @throws InvalidDataUnitException 
 	 */
 	public StringDataUnit( Calendar cal, String value )
 	{
 		this.setCalendar(cal);
 		this.setValue(value);
-		this.setType(DataUnitType.StringUnit);
+		try {
+			this.setType(DataUnitType.StringUnit);
+		} catch (InvalidDataUnitException e) {
+			//Should not happen
+		}
 	}
 
 	/**
@@ -94,5 +99,16 @@ public class StringDataUnit extends ADataUnit{
 		
 		m_value = (String)value;
 	}
+	
+	@Override
+	public void setType( DataUnitType type ) throws InvalidDataUnitException
+	{
+		if( this.getType() != DataUnitType.DefaultUnit )
+			throw new InvalidDataUnitException("Should not change the DataUnitType for an existing DataUnit instance.");
+		else if ( type != DataUnitType.StringUnit )
+			throw new InvalidDataUnitException("Instance of StringDataUnit could only be set to have DataUnitType.StringUnit");
+		super.setType(type);
+	}
+	
 	
 }

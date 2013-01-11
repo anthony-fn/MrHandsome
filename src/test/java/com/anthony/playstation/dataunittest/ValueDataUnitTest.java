@@ -8,6 +8,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.anthony.playstation.data.dataunit.DataUnitType;
 import com.anthony.playstation.data.dataunit.StringDataUnit;
 import com.anthony.playstation.data.dataunit.ValueDataUnit;
 import com.anthony.playstation.exceptions.InvalidDataUnitException;
@@ -41,13 +42,12 @@ public class ValueDataUnitTest
 	public void testSetValue()
 	{
 		m_unit.setValue((float)20);
-		System.out.println(m_unit.getValue());
 		assertTrue( m_unit.getValue() == 20);
 		init();
 	}
 
 	@Test
-	public void testCompareValue()
+	public void testCompareValue() throws InvalidDataUnitException
 	{
 		ValueDataUnit unit = new ValueDataUnit(m_unit.getCalendar(), 10);
 		
@@ -84,67 +84,127 @@ public class ValueDataUnitTest
 	@Test
 	public void testValueDataUnitCalendarFloat()
 	{
-		fail("Not yet implemented");
+		assertNotNull(m_unit);
 	}
 
 	@Test
 	public void testValueDataUnitStringFloat()
 	{
-		fail("Not yet implemented");
+		ValueDataUnit unit = null;
+		
+		try {
+			unit = new ValueDataUnit("1234-1-2", 10);
+			assertNotNull(unit);
+		} catch (InvalidDataUnitException e) {
+			fail();
+		}
+		
+		try {
+			unit = new ValueDataUnit("MrHandsome", 20);
+			fail();
+		} catch (InvalidDataUnitException e) {
+		}
 	}
 
 	@Test
 	public void testGetValue()
 	{
-		fail("Not yet implemented");
+		assertTrue( m_unit.getValue() == 10);
 	}
 
 	@Test
 	public void testGetCalendar()
 	{
-		fail("Not yet implemented");
+		Calendar cal = m_unit.getCalendar();
+		
+		assertEquals(cal.get(Calendar.YEAR), 1901);
+		assertEquals(cal.get(Calendar.MONTH), 1);
+		assertEquals(cal.get(Calendar.DAY_OF_MONTH), 1);
 	}
 
 	@Test
 	public void testGetDateString()
-	{
-		fail("Not yet implemented");
+	{	
+		assertTrue(m_unit.getDateString().equals("1901-02-01"));
 	}
 
 	@Test
 	public void testSetCalendarCalendar()
 	{
-		fail("Not yet implemented");
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.YEAR, 2000);
+		cal.set(Calendar.MONTH, 11);
+		cal.set(Calendar.DAY_OF_MONTH, 11);
+		
+		m_unit.setCalendar(cal);
+		
+		assertTrue( m_unit.getDateString().equals("2000-12-11"));
+		init();
 	}
 
 	@Test
 	public void testSetCalendarString()
 	{
-		fail("Not yet implemented");
+		try {
+			m_unit.setCalendar("2000-12-11");
+			
+			assertEquals(m_unit.getCalendar().get(Calendar.YEAR), 2000);
+			assertEquals(m_unit.getCalendar().get(Calendar.MONTH), 11);
+			assertEquals(m_unit.getCalendar().get(Calendar.DAY_OF_MONTH), 11);
+		} catch (InvalidDataUnitException e) {
+			fail();
+		}
+		
+		try {
+			m_unit.setCalendar("avc");
+			fail();
+		} catch (InvalidDataUnitException e) {
+			init();
+		}
 	}
 
 	@Test
 	public void testSetType()
 	{
-		fail("Not yet implemented");
+		try {
+			m_unit.setType(DataUnitType.StringUnit);
+			fail();
+		} catch (InvalidDataUnitException e) {
+		}
+		
+		try {
+			m_unit.setType(DataUnitType.DefaultUnit);
+			fail();
+		} catch (InvalidDataUnitException e) {
+		}
+		
+		try {
+			m_unit.setType(DataUnitType.ValueUnit);
+			fail();
+		} catch (InvalidDataUnitException e) {
+		}
 	}
-
 	@Test
 	public void testGetType()
 	{
-		fail("Not yet implemented");
+		assertEquals(m_unit.getType(), DataUnitType.ValueUnit);
 	}
 
 	@Test
 	public void testCompareDate()
 	{
-		fail("Not yet implemented");
+		ValueDataUnit unit = null;
+		try {
+			 unit = new ValueDataUnit("1901-02-01", 10);
+			 
+			 assertTrue( unit.compareDate(m_unit) == 0 );
+			 
+			 unit.setCalendar("1901-12-12");
+			 
+			 assertTrue( 0 < unit.compareDate(m_unit));
+			 assertTrue( 0 > m_unit.compareDate(unit));
+		} catch (InvalidDataUnitException e) {
+			fail();
+		}
 	}
-
-	@Test
-	public void testGetValue1()
-	{
-		fail("Not yet implemented");
-	}
-
 }

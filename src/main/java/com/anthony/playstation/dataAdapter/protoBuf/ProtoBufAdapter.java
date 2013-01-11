@@ -1,3 +1,13 @@
+/**   
+* @Title: 		ProtoBufAdapter.java 
+* @Package 		com.anthony.playstation.dataAdapter.protoBuf 
+* @Description:  
+* 				The defination of class ProtoBufAdapter
+* @author 		Anthony Fan
+* @date 		2013-1-10 
+* @time 		21:17:46 
+* @version 		V 1.0   
+*/
 package com.anthony.playstation.dataAdapter.protoBuf;
 
 import java.util.LinkedList;
@@ -17,10 +27,22 @@ import com.anthony.playstation.exceptions.DataAdapterException;
 import com.anthony.playstation.exceptions.InvalidDataUnitException;
 import com.google.protobuf.InvalidProtocolBufferException;
 
+/**
+ * An implementation of ADataAdapter.
+ * 
+ * This class serialize/deserialize data between a ProtoBuffer formatted byte[] and an instance of DataSeries.
+ */
 public class ProtoBufAdapter extends ADataAdapter
 {
 
-	private static List<ADataUnit> valueFromPro( ValueDataSeriesForProto valueSeries ) throws InvalidDataUnitException
+	/**
+	 * Method valueFromPro.
+	 * Transfer data from a ValueDataSeriesForProtoBuffer (generated code from ProtoBuffer) into List<ADataUnit>
+	 * @param valueSeries ValueDataSeriesForProtoBuffer
+	 * @return List<ADataUnit>
+	 * @throws InvalidDataUnitException
+	 */
+	private static List<ADataUnit> valueFromProtoBuffer( ValueDataSeriesForProto valueSeries ) throws InvalidDataUnitException
 	{
 		List<ADataUnit> result = new LinkedList<ADataUnit>();
 		
@@ -36,24 +58,41 @@ public class ProtoBufAdapter extends ADataAdapter
 		return result;
 	}
 	
-	private static UniformType uniformTypeFromPro( UniformTypeForProto typeFromPro)
+	/**
+	 * Method uniformTypeFromPro.
+	 * Transfer data from a UniformTypeForProtoBuffer (generated code from ProtoBuffer) into an instance of UniformType
+	 * @param typeFromPro UniformTypeForProto
+	 * @return UniformType
+	 */
+	private static UniformType uniformTypeFromProtoBuffer( UniformTypeForProto typeFromPro)
 	{
 		return new UniformType( typeFromPro.getTypeID(), typeFromPro.getTypeName(),
 				DataUnitType.values()[typeFromPro.getUnitType().ordinal()]);
 	}
 	
-	private static DataSeries proToSeries( ValueDataSeriesForProto valueSeries ) throws InvalidDataUnitException
+	/**
+	 * Method proToSeries.
+	 * @param valueSeries ValueDataSeriesForProto
+	 * @return DataSeries
+	 * @throws InvalidDataUnitException
+	 */
+	private static DataSeries protobufferToSeries( ValueDataSeriesForProto valueSeries ) throws InvalidDataUnitException
 	{
 		DataSeries result = null;
 		
 		
-		result = new DataSeries(ProtoBufAdapter.uniformTypeFromPro(valueSeries.getUniformType()),
+		result = new DataSeries(ProtoBufAdapter.uniformTypeFromProtoBuffer(valueSeries.getUniformType()),
 				valueSeries.getId());
 		
-		result.setUnitList(ProtoBufAdapter.valueFromPro(valueSeries));
+		result.setUnitList(ProtoBufAdapter.valueFromProtoBuffer(valueSeries));
 		return result;
 	}
 	
+	/**
+	 * Method seriesToPro.
+	 * @param series DataSeries
+	 * @return ValueDataSeriesForProto
+	 */
 	private static ValueDataSeriesForProto seriesToPro( DataSeries series )
 	{
 		ValueDataSeriesForProto.Builder valueSeries = ValueDataSeriesForProto.newBuilder();
@@ -81,12 +120,25 @@ public class ProtoBufAdapter extends ADataAdapter
 		return valueSeries.build();
 	}
 	
+	/**
+	 * Method serializeSeries.
+	 * @param series DataSeries
+	 * @return byte[]
+	 * @throws DataAdapterException
+	 */
 	@Override
 	public byte[] serializeSeries(DataSeries series) throws DataAdapterException
 	{
 		return ProtoBufAdapter.seriesToPro(series).toByteArray();
 	}
 
+	/**
+	 * Method loadSeries.
+	 * @param mapping Object
+	 * @param content byte[]
+	 * @return List<DataSeries>
+	 * @throws DataAdapterException
+	 */
 	@Override
 	public List<DataSeries> loadSeries(Object mapping, byte[] content) throws DataAdapterException
 	{
@@ -95,7 +147,7 @@ public class ProtoBufAdapter extends ADataAdapter
 		try
 		{
 			proto = ValueDataSeriesForProto.parseFrom(content);
-			series = ProtoBufAdapter.proToSeries(proto);
+			series = ProtoBufAdapter.protobufferToSeries(proto);
 		} catch (InvalidProtocolBufferException e)
 		{
 			throw new DataAdapterException("Failed to parse data from byte to DataSeries: "+e.getMessage(), e);

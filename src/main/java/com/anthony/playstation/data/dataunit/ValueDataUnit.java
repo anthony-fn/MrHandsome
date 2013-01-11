@@ -24,7 +24,7 @@ import com.anthony.playstation.exceptions.InvalidDataUnitException;
 public class ValueDataUnit extends ADataUnit{
 
 	/**
-	 * Field m_value.
+	 * float m_value.
 	 */
 	private float m_value = 0;
 	
@@ -32,12 +32,17 @@ public class ValueDataUnit extends ADataUnit{
 	 * Constructor for ValueDataUnit.
 	 * @param cal Calendar
 	 * @param value float
+	 * @throws InvalidDataUnitException 
 	 */
 	public ValueDataUnit( Calendar cal, float value )
 	{
 		this.setCalendar(cal);
 		this.setValue(value);
-		this.setType(DataUnitType.ValueUnit);
+		try {
+			this.setType(DataUnitType.ValueUnit);
+		} catch (InvalidDataUnitException e) {
+			//Should not happen.
+		}
 	}
 	
 	/**
@@ -121,4 +126,13 @@ public class ValueDataUnit extends ADataUnit{
 		System.out.println(sdf.format(this.getCalendar().getTime())+"\t"+m_value);
 	}
 	
+	@Override
+	public void setType( DataUnitType type ) throws InvalidDataUnitException
+	{
+		if( this.getType() != DataUnitType.DefaultUnit )
+			throw new InvalidDataUnitException("Should not change the DataUnitType for an existing DataUnit instance.");
+		else if ( type != DataUnitType.ValueUnit )
+			throw new InvalidDataUnitException("Instance of ValueDataUnit could only be set to have DataUnitType.ValueUnit");
+		super.setType(type);
+	}
 }

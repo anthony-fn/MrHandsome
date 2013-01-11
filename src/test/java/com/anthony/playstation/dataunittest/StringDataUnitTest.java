@@ -16,7 +16,8 @@ public class StringDataUnitTest
 	public void testGetUniverseValue()
 	{
 		Calendar cal = Calendar.getInstance();
-		ADataUnit unit = new StringDataUnit(cal, "MrHandsome");
+		ADataUnit unit = null;
+		unit = new StringDataUnit(cal, "MrHandsome");
 		
 		Object obj = unit.getValue();
 		
@@ -28,9 +29,12 @@ public class StringDataUnitTest
 	{
 		Calendar cal = Calendar.getInstance();
 		
-		ADataUnit unit = new StringDataUnit(cal, "BradPitt");
-		ADataUnit unit1 = new StringDataUnit(cal, "TomCruise");
-		ADataUnit unit2 = new StringDataUnit(cal, "BradPitt");
+		ADataUnit unit = null;
+		ADataUnit unit1 = null;
+		ADataUnit unit2 = null;
+		unit = new StringDataUnit(cal, "BradPitt");
+		unit1 = new StringDataUnit(cal, "TomCruise");
+		unit2 = new StringDataUnit(cal, "BradPitt"); 
 		
 		try
 		{
@@ -49,7 +53,8 @@ public class StringDataUnitTest
 	{
 		Calendar cal = Calendar.getInstance();
 		
-		StringDataUnit unit = new StringDataUnit(cal, "BradPitt");
+		StringDataUnit unit = null;
+		unit = new StringDataUnit(cal, "BradPitt");
 		
 		assertTrue(unit.getValue().equals("BradPitt"));
 	}
@@ -59,7 +64,8 @@ public class StringDataUnitTest
 	{
 		Calendar cal = Calendar.getInstance();
 		
-		StringDataUnit unit = new StringDataUnit(cal, "BradPitt");
+		StringDataUnit unit = null;
+		unit = new StringDataUnit(cal, "BradPitt");
 		unit.setValue("TomCruise");
 		
 		assertTrue(unit.getValue().equals("TomCruise"));
@@ -73,7 +79,8 @@ public class StringDataUnitTest
 		cal.set(Calendar.MONTH, 1);
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		
-		StringDataUnit unit = new StringDataUnit(cal, "BradPitt");
+		StringDataUnit unit = null;
+		unit = new StringDataUnit(cal, "BradPitt");
 		
 		Calendar cal1 = unit.getCalendar();
 		
@@ -90,7 +97,8 @@ public class StringDataUnitTest
 		cal.set(Calendar.MONTH, 1);
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		
-		StringDataUnit unit = new StringDataUnit(cal, "BradPitt");
+		StringDataUnit unit = null;
+		unit = new StringDataUnit(cal, "BradPitt");
 		assertTrue(unit.getDateString().equals("1901-02-01"));
 	}
 
@@ -102,7 +110,8 @@ public class StringDataUnitTest
 		cal.set(Calendar.MONTH, 1);
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		
-		StringDataUnit unit = new StringDataUnit(cal, "BradPitt");
+		StringDataUnit unit = null;
+		unit = new StringDataUnit(cal, "BradPitt");
 		
 		Calendar cal1 = Calendar.getInstance();
 		cal1.set(Calendar.YEAR, 1901);
@@ -121,7 +130,8 @@ public class StringDataUnitTest
 		cal.set(Calendar.MONTH, 1);
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		
-		StringDataUnit unit = new StringDataUnit(cal, "BradPitt");
+		StringDataUnit unit = null;
+		unit = new StringDataUnit(cal, "BradPitt");
 		
 		try
 		{
@@ -150,11 +160,44 @@ public class StringDataUnitTest
 		cal.set(Calendar.MONTH, 1);
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		
-		StringDataUnit unit = new StringDataUnit(cal, "BradPitt");
+		StringDataUnit unit = null;
+		unit = new StringDataUnit(cal, "BradPitt");
 		
 		assertEquals(unit.getType(), DataUnitType.StringUnit);
 	}
 	
+	@Test
+	public void testSetType()
+	{
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.YEAR, 1901);
+		cal.set(Calendar.MONTH, 1);
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		
+		StringDataUnit m_unit = null;
+		
+		m_unit = new StringDataUnit(cal, "BradPitt");
+			
+		
+			try {
+				m_unit.setType(DataUnitType.StringUnit);
+				fail();
+			} catch (InvalidDataUnitException e) {
+			}
+			
+			try {
+				m_unit.setType(DataUnitType.DefaultUnit);
+				fail();
+			} catch (InvalidDataUnitException e) {
+			}
+			
+			try {
+				m_unit.setType(DataUnitType.ValueUnit);
+				fail();
+			} catch (InvalidDataUnitException e) {
+			}
+		
+	}
 	@Test
 	public void testCompareDate()
 	{
@@ -168,8 +211,10 @@ public class StringDataUnitTest
 		cal1.set(Calendar.MONTH, 1);
 		cal1.set(Calendar.DAY_OF_MONTH, 1);
 		
-		StringDataUnit unit = new StringDataUnit(cal, "BradPitt");
-		StringDataUnit unit1 = new StringDataUnit( cal1, "TomCruise");
+		StringDataUnit unit = null;
+		StringDataUnit unit1 = null;
+		unit = new StringDataUnit(cal, "BradPitt");
+		unit1 = new StringDataUnit( cal1, "TomCruise");
 		
 		assertTrue( 0 == unit.compareDate(unit1));
 		
