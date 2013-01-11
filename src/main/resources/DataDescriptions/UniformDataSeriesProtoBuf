@@ -1,0 +1,27 @@
+message UniformDataSeriesForProto {
+  
+  required string id = 1;
+
+  enum DataUnitTypeForProto {
+    DEFAULT = 0;
+    VALUE = 1;
+    STRING = 2;
+  }
+
+  message UniformTypeForProto{
+	required int32 typeID = 1;
+	required string typeName = 2;
+	required DataUnitTypeForProto unitType = 3 [default = DEFAULT];
+  }
+  
+  required UniformTypeForProto uniformType = 2;
+  
+  message ValueUnitForProto{
+	required string date = 1;
+	required string value = 2;
+  }
+  
+  repeated ValueUnitForProto valueList = 3;
+  
+  
+}

@@ -137,6 +137,11 @@ public class PlayStation
 		
 		try
 		{
+			float abc = 123;
+			Object test = abc;
+			String test2 = "123";
+			
+			System.out.println(test2.equals((String)test));
 			ChinaEquityDataDescription desc = new ChinaEquityDataDescription("DataDescriptions/TSDB/ChinaEquity.tsdbtypes");
 			ChinaEquityMarket market = new ChinaEquityMarket("MarketDescriptions/ChinaEquity.data");
 			DumpDataFromTSDBToLocal(market.getMemberList());

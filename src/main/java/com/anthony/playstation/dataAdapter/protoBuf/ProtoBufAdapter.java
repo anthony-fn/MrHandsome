@@ -17,12 +17,13 @@ import com.anthony.playstation.data.ADataUnit;
 import com.anthony.playstation.data.dataseries.DataSeries;
 import com.anthony.playstation.data.dataseries.UniformType;
 import com.anthony.playstation.data.dataunit.DataUnitType;
+import com.anthony.playstation.data.dataunit.StringDataUnit;
 import com.anthony.playstation.data.dataunit.ValueDataUnit;
 import com.anthony.playstation.dataAdapter.ADataAdapter;
-import com.anthony.playstation.dataAdapter.protoBuf.ValueDataSeriesProtoBuf.ValueDataSeriesForProto;
-import com.anthony.playstation.dataAdapter.protoBuf.ValueDataSeriesProtoBuf.ValueDataSeriesForProto.DataUnitTypeForProto;
-import com.anthony.playstation.dataAdapter.protoBuf.ValueDataSeriesProtoBuf.ValueDataSeriesForProto.UniformTypeForProto;
-import com.anthony.playstation.dataAdapter.protoBuf.ValueDataSeriesProtoBuf.ValueDataSeriesForProto.ValueUnitForProto;
+import com.anthony.playstation.dataAdapter.protoBuf.UniformDataSeriesProtoBuf.UniformDataSeriesForProto;
+import com.anthony.playstation.dataAdapter.protoBuf.UniformDataSeriesProtoBuf.UniformDataSeriesForProto.DataUnitTypeForProto;
+import com.anthony.playstation.dataAdapter.protoBuf.UniformDataSeriesProtoBuf.UniformDataSeriesForProto.UniformTypeForProto;
+import com.anthony.playstation.dataAdapter.protoBuf.UniformDataSeriesProtoBuf.UniformDataSeriesForProto.ValueUnitForProto;
 import com.anthony.playstation.exceptions.DataAdapterException;
 import com.anthony.playstation.exceptions.InvalidDataUnitException;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -37,22 +38,34 @@ public class ProtoBufAdapter extends ADataAdapter
 
 	/**
 	 * Method valueFromPro.
-	 * Transfer data from a ValueDataSeriesForProtoBuffer (generated code from ProtoBuffer) into List<ADataUnit>
-	 * @param valueSeries ValueDataSeriesForProtoBuffer
+	 * Transfer data from a UniformDataSeriesForProtoBuffer (generated code from ProtoBuffer) into List<ADataUnit>
+	 * @param valueSeries UniformDataSeriesForProtoBuffer
 	 * @return List<ADataUnit>
 	 * @throws InvalidDataUnitException
 	 */
-	private static List<ADataUnit> valueFromProtoBuffer( ValueDataSeriesForProto valueSeries ) throws InvalidDataUnitException
+	private static List<ADataUnit> valueFromProtoBuffer( UniformDataSeriesForProto valueSeries ) throws InvalidDataUnitException
 	{
 		List<ADataUnit> result = new LinkedList<ADataUnit>();
 		
 		int length = valueSeries.getValueListCount();
-		
+		int type = valueSeries.getUniformType().getUnitType().ordinal();
 		
 		for( int i = 0; i < length; i ++ )
 		{
 			ValueUnitForProto unit = valueSeries.getValueList(i);
-			result.add(new ValueDataUnit(unit.getDate(), unit.getValue()));
+			
+			switch( type )
+			{
+			case 2:
+				result.add(new StringDataUnit(unit.getDate(), unit.getValue()));
+				break;
+			case 1:
+				result.add(new ValueDataUnit(unit.getDate(), Float.parseFloat(unit.getValue())));
+				break;
+			default:
+				break;
+			}
+			
 		}
 		
 		return result;
@@ -60,7 +73,7 @@ public class ProtoBufAdapter extends ADataAdapter
 	
 	/**
 	 * Method uniformTypeFromPro.
-	 * Transfer data from a UniformTypeForProtoBuffer (generated code from ProtoBuffer) into an instance of UniformType
+	 * Transfer data from a UniformTypeForProtoBuffer (generated code from ProtoBuffer) into an instance of UniformType.
 	 * @param typeFromPro UniformTypeForProto
 	 * @return UniformType
 	 */
@@ -72,11 +85,12 @@ public class ProtoBufAdapter extends ADataAdapter
 	
 	/**
 	 * Method proToSeries.
-	 * @param valueSeries ValueDataSeriesForProto
+	 * Transfer data from a UniformDataSeriesForProto (generated code from ProtoBuffer) into an instance of DataSeries
+	 * @param valueSeries UniformDataSeriesForProto
 	 * @return DataSeries
 	 * @throws InvalidDataUnitException
 	 */
-	private static DataSeries protobufferToSeries( ValueDataSeriesForProto valueSeries ) throws InvalidDataUnitException
+	private static DataSeries protobufferToSeries( UniformDataSeriesForProto valueSeries ) throws InvalidDataUnitException
 	{
 		DataSeries result = null;
 		
@@ -90,12 +104,13 @@ public class ProtoBufAdapter extends ADataAdapter
 	
 	/**
 	 * Method seriesToPro.
+	 * Transfer data from an instance of DataSeries into a UniformDataSeriesForProto(generated code from ProtoBuffer)
 	 * @param series DataSeries
-	 * @return ValueDataSeriesForProto
+	 * @return UniformDataSeriesForProto
 	 */
-	private static ValueDataSeriesForProto seriesToPro( DataSeries series )
+	private static UniformDataSeriesForProto seriesToPro( DataSeries series )
 	{
-		ValueDataSeriesForProto.Builder valueSeries = ValueDataSeriesForProto.newBuilder();
+		UniformDataSeriesForProto.Builder valueSeries = UniformDataSeriesForProto.newBuilder();
 		valueSeries.setId(series.getPerformanceID());
 		
 		UniformTypeForProto.Builder uniformType = UniformTypeForProto.newBuilder();
@@ -112,7 +127,20 @@ public class ProtoBufAdapter extends ADataAdapter
 			ValueUnitForProto.Builder valueUnit = ValueUnitForProto.newBuilder();
 			
 			valueUnit.setDate(unit.getDateString());
-			valueUnit.setValue((Float)((ValueDataUnit)unit).getValue());
+			
+			switch( type.getValueType().ordinal() )
+			{
+			case 1:
+				valueUnit.setValue( String.valueOf((Float)(unit.getValue())));
+				break;
+			case 2:
+				valueUnit.setValue((String)unit.getValue());
+				break;
+			case 0:
+			default:
+				valueUnit.setValue("");
+					
+			}
 			
 			valueSeries.addValueList(valueUnit.build());
 		}
@@ -136,17 +164,17 @@ public class ProtoBufAdapter extends ADataAdapter
 	 * Method loadSeries.
 	 * @param mapping Object
 	 * @param content byte[]
-	 * @return List<DataSeries>
+	 * @return List<DataSeries> The reason of keeping a List<> here is for TSDBDataAdapter. Other Adapters should have List<>.size() = 1
 	 * @throws DataAdapterException
 	 */
 	@Override
 	public List<DataSeries> loadSeries(Object mapping, byte[] content) throws DataAdapterException
 	{
-		ValueDataSeriesForProto proto = null;
+		UniformDataSeriesForProto proto = null;
 		DataSeries series = null;
 		try
 		{
-			proto = ValueDataSeriesForProto.parseFrom(content);
+			proto = UniformDataSeriesForProto.parseFrom(content);
 			series = ProtoBufAdapter.protobufferToSeries(proto);
 		} catch (InvalidProtocolBufferException e)
 		{

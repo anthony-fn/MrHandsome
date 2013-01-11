@@ -19,9 +19,15 @@ import com.morningstar.data.tsapi.blobData.TpTinyDate;
 import com.morningstar.data.tsapi.impl.CompressionPackage;
 import com.morningstar.data.tsapi.impl.GZipAgent;
 
+/**
+ */
 public class TSDBDataAdapter extends ADataAdapter
 {
 	
+	/**
+	 * Field values.
+	 * Value: {@value values}
+	 */
 	private static Field values = null;
 	static {
 		try {
@@ -35,6 +41,12 @@ public class TSDBDataAdapter extends ADataAdapter
 		
 	}
 
+	/**
+	 * Method serializeSeries.
+	 * @param series DataSeries
+	 * @return byte[]
+	 * @throws DataAdapterException
+	 */
 	@Override
 	public byte[] serializeSeries(DataSeries series) throws DataAdapterException
 	{
@@ -42,6 +54,13 @@ public class TSDBDataAdapter extends ADataAdapter
 		return null;
 	}
 
+	/**
+	 * Method loadSeries.
+	 * @param mappingInput Object
+	 * @param content byte[]
+	 * @return List<DataSeries>
+	 * @throws DataAdapterException
+	 */
 	@Override
 	public List<DataSeries> loadSeries(Object mappingInput, byte[] content) throws DataAdapterException
 	{

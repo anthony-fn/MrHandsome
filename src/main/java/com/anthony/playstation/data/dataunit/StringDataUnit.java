@@ -43,6 +43,19 @@ public class StringDataUnit extends ADataUnit{
 			//Should not happen
 		}
 	}
+	
+	/**
+	 * Constructor for ValueDataUnit.
+	 * @param cal String
+	 * @param value float
+	 * @throws InvalidDataUnitException
+	 */
+	public StringDataUnit( String cal, String value ) throws InvalidDataUnitException
+	{
+		this.setCalendar(cal);
+		this.setValue(value);
+		this.setType(DataUnitType.StringUnit);
+	}
 
 	/**
 	 * Gets the String value.

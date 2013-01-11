@@ -80,7 +80,7 @@ public class DataDump
 		logger.info("*****Finished testing class DataDump*****");
 	}
 	
-	
+	@Test
 	public void dumpDivendendPerShare()
 	{
 		int totalNum = m_market.getEquityNumber();
@@ -130,7 +130,7 @@ public class DataDump
 		System.out.println("Failed: "+((FixedJobBatch)jobBatch).checkForFailed());
 	}
 	
-	
+	@Test
 	public void dumpPrice()
 	{
 		int totalNum = m_market.getEquityNumber();
