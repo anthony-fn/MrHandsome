@@ -1,75 +1,86 @@
+/**   
+* @Title: 		LocalExecutor.java 
+* @Package 		com.anthony.playstation.executor 
+* @Description:  
+* 				Contains the definition of LocalExecutor.
+* @author 		Anthony Fan
+* @date 		2013-1-13 
+* @time 		17:39:24 
+* @version 		V 1.0   
+*/
 package com.anthony.playstation.executor;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import com.anthony.playstation.exceptions.JobBatchException;
 
 
+/**
+ * Class LocalExecutor contains an ExecutorService instance. 
+ * This instance is a FiexedThreadPool, whose number could be set via constructor.
+ * @author Anthony
+ * @version $Revision: 1.0 $
+ */
 public class LocalExecutor
 {
 	private static ExecutorService m_executor = null;
-	private static int MAX_WAIT_TIME = 50000;
 	private static int m_threadNum = 20;
 
 	private synchronized static void init()
 	{
 		if( m_executor == null )
 		{
-			m_executor = Executors.newFixedThreadPool(m_threadNum); 
+			m_executor = Executors.newFixedThreadPool(m_threadNum);
 		}
 	}
 	
+	/**
+	* Method dispose.
+	* Close the ExecutorService, should be called while all jobs are finished.
+	*/
 	public void dispose()
 	{
 		m_executor.shutdown();
 	}
 	
+	/**
+	 * Class constructor.
+	 * Initialize the instance with default pool size and wait time.
+	 */
 	public LocalExecutor()
 	{
 		LocalExecutor.init();
 	}
 	
-	public LocalExecutor( int number, int wait )
+	/**
+	 * Constructor for LocalExecutor.
+	 * @param number int	The thread number within the thread pool.
+	 * @param wait int		The max wait time for each job.
+	 */
+	public LocalExecutor( int number)
 	{
 		m_threadNum = number;
 		LocalExecutor.init();
-		MAX_WAIT_TIME = wait;
 	}
 	
+	/**
+	 * Method submit.
+	 * Add one instance of AJobBatch into the thread pool and start to execute.
+	 * @param jobBatch AJobBatch
+	
+	 * @throws JobBatchException */
 	public void submit( AJobBatch jobBatch ) throws JobBatchException 
 	{
 		int count = 0;
 		while( (count++) < jobBatch.getJobNum()  )
 		{
-			m_executor.submit(jobBatch.popOneJob());
+			AJob job = jobBatch.popOneJob();
+			if( job != null )
+			{
+				job.setStatus(JobStatus.Submitted);
+				job.setResult(m_executor.submit(job));
+			}
 		}
-	}
-	
-	public int getResult( Future<Integer> resultFuture )
-	{
-		int result = -1;
-		try
-		{
-			result = resultFuture.get(MAX_WAIT_TIME, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TimeoutException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-			
-		return result;
 	}
 }

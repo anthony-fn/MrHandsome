@@ -1,6 +1,7 @@
 package com.anthony.playstation.executor;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.log4j.Logger;
 
@@ -13,6 +14,7 @@ import com.anthony.playstation.dataAdapter.protoBuf.ProtoBufAdapter;
 import com.anthony.playstation.exceptions.DataDumpException;
 import com.anthony.playstation.exceptions.DataIOException;
 import com.anthony.playstation.exceptions.DataProxyOperationException;
+import com.anthony.playstation.exceptions.JobOperationException;
 
 public class DataDumpJob extends AJob
 {
@@ -59,35 +61,53 @@ public class DataDumpJob extends AJob
 		return m_failed;
 	}
 	
-	public Integer call() throws Exception
+	public Object call() throws Exception
 	{
-		int result = 0;
+		JobStatus status = JobStatus.Running;
+		this.setStatus(status);
 		try
 		{
-			//if( !(m_mapping instanceof com.anthony.playstation.data.mapping.MappingInfo) )
-			//	throw new Exception( new DataDumpException("Invalid data source. Right now we only have TSDB as data source"));
 			List<DataSeries> data = m_source.loadData(((MappingInfo)m_mapping).getObjectId(), m_mapping, m_adapterSrc);
 			
 			for( DataSeries series : data )
 			{
-				result = m_target.saveData(m_adapterTar, series);
+				int result = m_target.saveData(m_adapterTar, series);
+				if( result != 0 )
+					status = JobStatus.failed;
 			}
-			
-			if( result != 0 )
-			{
-				m_failed = true;
-				throw new Exception(new DataDumpException("Save data with return "+result));
-			}
+			status = JobStatus.Succeed;
 		} catch (DataIOException e)
 		{
 			m_failed = true;
+			status = JobStatus.failed;
+			String message = "Data dump failed : " + e.getMessage();
+			this.setMessage(message);
 			logger.error(e.getMessage());
-			throw new Exception (new DataDumpException("Dump data failed !", new Exception(e) ) );
+			throw new Exception (new DataDumpException(message, new Exception(e) ) );
 		}
 		finally{
+			this.setStatus(status);
 			this.hasFinished();
 		}
-		return result;
+		return status;
+	}
+
+	@Override
+	public void handleResult(Object result) throws JobOperationException {
+		try {
+			JobStatus status = (JobStatus)this.getResult().get();
+			
+			if( status == JobStatus.failed)
+			{
+				logger.error("The data dump job for "+ ((MappingInfo)m_mapping).getObjectId()+" "+((MappingInfo)m_mapping).getTsType()
+						+" has failed with message " + this.getMessage() );
+			}
+		} catch (InterruptedException e) {
+			throw new JobOperationException("Get job result failed "+e.getMessage(), e);
+			
+		} catch (ExecutionException e) {
+			throw new JobOperationException("Get job result failed "+e.getMessage(), e);
+		}
 	}
 
 }

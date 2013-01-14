@@ -46,8 +46,7 @@ public class DataDump
 			m_target = new LocalFileProxyFactory(ConfigManager.getInstance().getString("LocalFile_Source"),
 					ConfigManager.getInstance().getString("LocalFile_Target"));
 			
-			m_executor = new LocalExecutor(Integer.parseInt(ConfigManager.getInstance().getString("LocalThreadNum")),
-					Integer.parseInt(ConfigManager.getInstance().getString("LocalThreadMaxWait")));
+			m_executor = new LocalExecutor(Integer.parseInt(ConfigManager.getInstance().getString("LocalThreadNum")));
 			
 			m_market = new ChinaEquityMarket("MarketDescriptions/ChinaEquity.data");
 			

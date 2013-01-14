@@ -64,8 +64,7 @@ public class PlayStation
 			ADataIOProxyFactory local = new LocalFileProxyFactory(ConfigManager.getInstance().getString("LocalFile_Source"),
 					ConfigManager.getInstance().getString("LocalFile_Target"));
 			
-			LocalExecutor executor = new LocalExecutor(Integer.parseInt(ConfigManager.getInstance().getString("LocalThreadNum")),
-					Integer.parseInt(ConfigManager.getInstance().getString("LocalThreadMaxWait")));
+			LocalExecutor executor = new LocalExecutor(Integer.parseInt(ConfigManager.getInstance().getString("LocalThreadNum")));
 			
 			AJobFactory dumpFactory = new DataDumpJobFactory(tsdb, local);
 			

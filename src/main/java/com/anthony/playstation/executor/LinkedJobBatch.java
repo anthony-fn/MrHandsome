@@ -1,6 +1,8 @@
 package com.anthony.playstation.executor;
 
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -9,16 +11,12 @@ import com.anthony.playstation.exceptions.JobBatchException;
 public class LinkedJobBatch extends AJobBatch{
 	
 	private BlockingQueue<AJob> m_jobs = new LinkedBlockingQueue<AJob>();
-	private int m_number = 0;
+	private List<AJob> m_keptJobs = new LinkedList<AJob>();
 	private Object m_lock = new Object();
-
-	public LinkedJobBatch( int max )
-	{
-		m_number = max;
-	}
+	
 	@Override
 	public int getJobNum() {
-		return m_jobs.size();
+		return m_keptJobs.size();
 	}
 
 	@Override
@@ -41,8 +39,7 @@ public class LinkedJobBatch extends AJobBatch{
 
 	@Override
 	public AJob popOneJob() throws JobBatchException {
-		// TODO Auto-generated method stub
-		return null;
+		return m_jobs.poll();
 	}
 
 	@Override
@@ -53,8 +50,12 @@ public class LinkedJobBatch extends AJobBatch{
 
 	@Override
 	public void pushOneJob(AJob job) throws JobBatchException {
-		// 
-		
+		try {
+			m_jobs.put(job);
+			m_keptJobs.add(job);
+		} catch (InterruptedException e) {
+			throw new JobBatchException("Can't add another job with error "+e.getMessage(), e);
+		}
 	}
 
 }

@@ -1,3 +1,13 @@
+/**   
+* @Title: 		LocalFileProxy.java 
+* @Package 		com.anthony.playstation.dataAPI 
+* @Description:  
+* 				Contains the definition of class LocalFileProxy
+* @author 		Anthony Fan
+* @date 		2013-1-12 
+* @time 		23:26:56 
+* @version 		V 1.0   
+*/
 package com.anthony.playstation.dataAPI;
 
 import java.io.BufferedOutputStream;
@@ -15,25 +25,64 @@ import com.anthony.playstation.dataAdapter.ADataAdapter;
 import com.anthony.playstation.exceptions.DataAdapterException;
 import com.anthony.playstation.exceptions.DataIOException;
 
+/**
+ * Class LocalFileProxy, which is derived class from ADataIOProxy
+ * @author Anthony
+ * @version $Revision: 1.0 $
+ */
 public class LocalFileProxy extends ADataIOProxy{
 
 	private String m_srcprefix = "";
 	private String m_tarprefix = "";
 	
-	public LocalFileProxy( String srcprefix , String tarprefix)
+	/**
+	 * Constructor for LocalFileProxy.
+	
+	* @param source String
+	}*/
+	
+	public void setSourceDirectory( String source )
 	{
-		if( srcprefix == null )
-			m_srcprefix="";
-		else
-			m_srcprefix = srcprefix;
-		
-		if( tarprefix == null )
-			m_tarprefix="";
-		else
-			m_tarprefix = tarprefix;
-		
+		m_srcprefix = source;
+	}
+	
+	/**
+	 * Method setTargetDirectory.
+	 * @param target String
+	 */
+	public void setTargetDirectory( String target )
+	{
+		m_tarprefix = target;
+	}
+	
+	/**
+	 * Method getSourceDirectory.
+	 * @return String
+	 */
+	public String getSourceDirectory()
+	{
+		return m_srcprefix;
+	}
+	
+	/**
+	 * Method getTargetDirectory.
+	 * @return String
+	 */
+	public String getTargetDirectory()
+	{
+		return m_tarprefix;
 	}
 
+	/**
+	 * Method loadData.
+	 * Load data from local directory.
+	 * @param objID String
+	 * @param mapping Object	Instance of UniformType.
+	 * @param adapter ADataAdapter	
+	
+	
+	 * @return List<DataSeries> * @throws DataIOException * @throws DataIOException
+	 */
 	@Override
 	public List<DataSeries> loadData(String objID, Object mapping, ADataAdapter adapter) throws DataIOException
 	{
@@ -82,6 +131,14 @@ public class LocalFileProxy extends ADataIOProxy{
 		return resultList;
 	}
 
+	/**
+	 * Method saveData.
+	 * @param adapter ADataAdapter
+	 * @param series DataSeries
+	
+	
+	 * @return int * @throws DataIOException * @throws DataIOException
+	 */
 	@Override
 	public int saveData(ADataAdapter adapter, DataSeries series) throws DataIOException
 	{

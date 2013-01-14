@@ -10,7 +10,7 @@ public class FixedJobBatch extends AJobBatch
 {
 	
 	private List<AJob> m_jobs = null;
-	private List<Future<Integer>> m_results = null;
+	private List<Future<Object>> m_results = null;
 	private int m_maxJobNum = 0;
 	private int m_currentJobNum = 0;
 	private int m_popPos = 0;
@@ -22,7 +22,7 @@ public class FixedJobBatch extends AJobBatch
 		
 		m_maxJobNum = num;
 		m_jobs = new ArrayList<AJob>(num);
-		m_results = new ArrayList<Future<Integer>>(num);
+		m_results = new ArrayList<Future<Object>>(num);
 	}
 	
 	@Override
@@ -48,7 +48,7 @@ public class FixedJobBatch extends AJobBatch
 		return  m_jobs.get(m_popPos++);
 	}
 	
-	public void SetResult( Future<Integer> result, int pos )
+	public void SetResult( Future<Object> result, int pos )
 	{
 		m_results.add(pos, result);
 	}
