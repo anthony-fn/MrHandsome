@@ -69,17 +69,22 @@ public class DataDumpJob extends AJob
 		{
 			List<DataSeries> data = m_source.loadData(((MappingInfo)m_mapping).getObjectId(), m_mapping, m_adapterSrc);
 			
+			if( data == null ||  data.size() == 0 )
+			{
+				status = JobStatus.Succeed;
+				return status;
+			}
 			for( DataSeries series : data )
 			{
 				int result = m_target.saveData(m_adapterTar, series);
 				if( result != 0 )
-					status = JobStatus.failed;
+					status = JobStatus.Failed;
 			}
 			status = JobStatus.Succeed;
 		} catch (DataIOException e)
 		{
 			m_failed = true;
-			status = JobStatus.failed;
+			status = JobStatus.Failed;
 			String message = "Data dump failed : " + e.getMessage();
 			this.setMessage(message);
 			logger.error(e.getMessage());
@@ -97,7 +102,7 @@ public class DataDumpJob extends AJob
 		try {
 			JobStatus status = (JobStatus)this.getResult().get();
 			
-			if( status == JobStatus.failed)
+			if( status == JobStatus.Failed)
 			{
 				logger.error("The data dump job for "+ ((MappingInfo)m_mapping).getObjectId()+" "+((MappingInfo)m_mapping).getTsType()
 						+" has failed with message " + this.getMessage() );

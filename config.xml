@@ -11,6 +11,6 @@
 <entry key="LocalThreadMaxWait">5000</entry>
 <entry key="MaxJobInBatch">10000</entry>
 
-<entry key="TSDBMappingtoUniform">DataDefination/TSDBToUniform.xml</entry>
-<entry key="UniformTypeDB">DataDefination/UniformDataTypes.xml</entry>
+<entry key="TSDBMappingtoUniform">DataDefinition/TSDBToUniform.xml</entry>
+<entry key="UniformTypeDB">DataDefinition/UniformDataTypes.xml</entry>
 </properties>

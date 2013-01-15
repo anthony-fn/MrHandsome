@@ -12,4 +12,5 @@ public abstract class AJobBatch
 	public abstract AJob popOneJob()  throws JobBatchException;
 	public abstract boolean isFinished();
 	public abstract void pushOneJob(AJob job) throws JobBatchException;
+	public abstract void getFailedJobs();
 }

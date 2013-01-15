@@ -14,6 +14,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.anthony.playstation.exceptions.JobBatchException;
+import com.anthony.playstation.exceptions.JobOperationException;
 
 
 /**
@@ -62,6 +63,15 @@ public class LocalExecutor
 	{
 		m_threadNum = number;
 		LocalExecutor.init();
+	}
+	
+	public void submit( AJob job) throws JobOperationException
+	{
+		if( job == null )
+			throw new JobOperationException("Trying to submit a null job into executor!");
+		
+		job.setStatus(JobStatus.Submitted);
+		job.setResult(m_executor.submit(job));
 	}
 	
 	/**

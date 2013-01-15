@@ -101,4 +101,11 @@ public class FixedJobBatch extends AJobBatch
 		}
 		return true;
 	}
+
+	@Override
+	public void getFailedJobs()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -7,7 +7,7 @@ public enum JobStatus {
 	Submitted,
 	Running,
 	Succeed,
-	failed;
+	Failed;
 	
 	public String toString(){	
     	return name();

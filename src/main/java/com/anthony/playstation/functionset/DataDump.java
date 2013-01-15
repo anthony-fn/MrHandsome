@@ -21,7 +21,7 @@ import com.anthony.playstation.exceptions.JobOperationException;
 import com.anthony.playstation.executor.AJobBatch;
 import com.anthony.playstation.executor.AJobFactory;
 import com.anthony.playstation.executor.DataDumpJobFactory;
-import com.anthony.playstation.executor.FixedJobBatch;
+import com.anthony.playstation.executor.LinkedJobBatch;
 import com.anthony.playstation.executor.LocalExecutor;
 
 public class DataDump
@@ -82,12 +82,10 @@ public class DataDump
 	@Test
 	public void dumpDivendendPerShare()
 	{
-		int totalNum = m_market.getEquityNumber();
-		int index = 0;
 		AJobBatch jobBatch = null;
 		try
 		{
-			jobBatch = new FixedJobBatch(totalNum);
+			jobBatch = new LinkedJobBatch();
 			for( ChinaEquity equity : m_market.getMemberList() )
 			{
 				MappingInfo mappingBase = new MappingInfo();
@@ -96,12 +94,10 @@ public class DataDump
 				mappingBase.setMapping(MappingType.MappingBaseObject);
 				
 				jobBatch.pushOneJob(m_dumpFactory.getOneJob(mappingBase));
-				
-				index ++;
-				logger.info("Job added to batch "+index+"/"+totalNum);
 			}
 			
 			m_executor.submit(jobBatch);
+			logger.info("JobBatch size "+ jobBatch.getJobNum());
 		} catch (JobBatchException e)
 		{
 			logger.error(e.getMessage());
@@ -125,19 +121,16 @@ public class DataDump
 			
 			logger.info(jobBatch.getRemaining()+"/"+jobBatch.getJobNum());
 		}
-		
-		System.out.println("Failed: "+((FixedJobBatch)jobBatch).checkForFailed());
+			jobBatch.getFailedJobs();
 	}
 	
 	@Test
 	public void dumpPrice()
 	{
-		int totalNum = m_market.getEquityNumber();
-		int index = 0;
 		AJobBatch jobBatch = null;
 		try
 		{
-			jobBatch = new FixedJobBatch(totalNum*2);
+			jobBatch = new LinkedJobBatch();
 			for( ChinaEquity equity : m_market.getMemberList() )
 			{
 				MappingInfo mappingBase = new MappingInfo();
@@ -153,10 +146,9 @@ public class DataDump
 				mappingcor.setMapping(MappingType.MappingCorporateActionAdjustment);
 				
 				jobBatch.pushOneJob(m_dumpFactory.getOneJob(mappingcor));
-				
-				index ++;
-				logger.info("Job added to batch "+index+"/"+totalNum*2);
 			}
+			
+			logger.info("JobBatch size "+ jobBatch.getJobNum());
 			
 			m_executor.submit(jobBatch);
 		} catch (JobBatchException e)

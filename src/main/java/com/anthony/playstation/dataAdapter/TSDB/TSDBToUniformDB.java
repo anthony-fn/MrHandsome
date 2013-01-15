@@ -1,3 +1,13 @@
+/**   
+* @Title: 		TSDBToUniformDB.java
+* @Package 		com.anthony.playstation.dataAdapter.TSDB
+* @Description: 
+* 				The DB like class TSDBToUniformDB, and the key class TSDBToUniformDBKey
+* @author 		Anthony Fan
+* @date 		2013-1-14 
+* @time 		14:04:53
+* @version 		V 1.0   
+*/
 package com.anthony.playstation.dataAdapter.TSDB;
 
 import java.io.IOException;
@@ -18,27 +28,54 @@ import org.xml.sax.SAXException;
 import com.anthony.playstation.data.mapping.MappingType;
 import com.anthony.playstation.exceptions.ConfigurationException;
 
+/**
+ * Used in the Map inside TSDBToUniform
+ */
 class TSDBToUniformDBKey{
 	
+	/**
+	 * Field m_tstype.
+	 */
 	private int m_tstype = 0;
+	/**
+	 * Field m_type.
+	 */
 	private MappingType m_type = MappingType.MappingBaseObject;
 	
+	/**
+	 * Constructor for TSDBToUniformDBKey.
+	 * @param tstype int
+	 * @param mappingType MappingType
+	 */
 	TSDBToUniformDBKey( int tstype, MappingType mappingType )
 	{
 		m_tstype = tstype;
 		m_type = mappingType;
 	}
 	
+	/**
+	 * Method getTSType.
+	 * @return int
+	 */
 	int getTSType()
 	{
 		return m_tstype;
 	}
 	
+	/**
+	 * Method getTSMappingType.
+	 * @return MappingType
+	 */
 	MappingType getTSMappingType()
 	{
 		return m_type;
 	}
 	
+	/**
+	 * Method equals.
+	 * @param key TSDBToUniformDBKey
+	 * @return boolean
+	 */
 	boolean equals(TSDBToUniformDBKey key )
 	{
 		if( (m_tstype == key.getTSType()) && (m_type == key.getTSMappingType()) )
@@ -47,17 +84,38 @@ class TSDBToUniformDBKey{
 			return false;
 	}
 	
+	/**
+	 * Method toString.
+	 * @return String
+	 */
 	public String toString()
 	{
 		return m_type.toString()+"\t"+m_tstype;
 	}
 }
 
+/**
+ * DB like class which contains all the mapping information between TSDB's data format and the uniformed data type.
+ */
 public abstract class TSDBToUniformDB
 {
+	/**
+	 * Field m_list.
+	 * Value: {@value m_list}
+	 */
 	private static Map<String, TSDBToUniform> m_list = new HashMap<String, TSDBToUniform>();
+	/**
+	 * Field m_inited.
+	 * Value: {@value m_inited}
+	 */
 	private static boolean m_inited = false;
 	
+	/**
+	 * Method getMappingType.
+	 * @param type String
+	 * @return MappingType
+	 * @throws ConfigurationException
+	 */
 	private static MappingType getMappingType( String type ) throws ConfigurationException
 	{
 		if( type == null || type.isEmpty() )
@@ -71,6 +129,13 @@ public abstract class TSDBToUniformDB
 			throw new ConfigurationException("Invalide mappingType input "+type);
 	}
 	
+	/**
+	 * Method getUniformType.
+	 * @param tsType int
+	 * @param type MappingType
+	 * @return TSDBToUniform
+	 * @throws ConfigurationException
+	 */
 	public static TSDBToUniform getUniformType( int tsType, MappingType type ) throws ConfigurationException
 	{
 		if( !m_inited )
@@ -81,11 +146,16 @@ public abstract class TSDBToUniformDB
 		return m_list.get(key.toString());
 	}
 	
+	/**
+	 * Method load.
+	 * @throws ConfigurationException
+	 */
 	private synchronized static void load () throws ConfigurationException
 	{
 		String fileName = ConfigManager.getInstance().getString("TSDBMappingtoUniform");
 		if(m_inited)
 			return;
+		
 		DocumentBuilderFactory factory ;
 		DocumentBuilder builder;		
 			
@@ -130,13 +200,13 @@ public abstract class TSDBToUniformDB
 			}
 		} catch (ParserConfigurationException e)
 		{
-			throw new ConfigurationException("Can't init TSDBToUniformDB .", e);
+			throw new ConfigurationException("Can't init TSDBToUniformDB "+e.getMessage(), e);
 		} catch (SAXException e)
 		{
-			throw new ConfigurationException("Can't init TSDBToUniformDB .", e);
+			throw new ConfigurationException("Can't init TSDBToUniformDB "+e.getMessage(), e);
 		} catch (IOException e)
 		{
-			throw new ConfigurationException("Can't init TSDBToUniformDB .", e);
+			throw new ConfigurationException("Can't init TSDBToUniformDB "+e.getMessage(), e);
 		}
 		m_inited = true;
 			
