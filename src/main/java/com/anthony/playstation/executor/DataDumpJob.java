@@ -1,8 +1,6 @@
 package com.anthony.playstation.executor;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-
 import org.apache.log4j.Logger;
 
 import com.anthony.playstation.data.dataseries.DataSeries;
@@ -23,7 +21,6 @@ public class DataDumpJob extends AJob
 	private Object m_mapping = null;
 	private ADataAdapter m_adapterSrc = null;
 	private ADataAdapter m_adapterTar = null;
-	private boolean m_failed = false;
 	private static final Logger logger = Logger.getLogger(DataDumpJob.class);
 	
 	public DataDumpJob( ADataIOProxy source, ADataIOProxy target, Object mapping) throws DataProxyOperationException
@@ -50,7 +47,7 @@ public class DataDumpJob extends AJob
 		return (MappingInfo)m_mapping;
 	}
 	
-	@Override
+	/*@Override
 	public boolean isFailed()
 	{
 		if( !this.isFinished())
@@ -59,7 +56,7 @@ public class DataDumpJob extends AJob
 		}
 		
 		return m_failed;
-	}
+	}*/
 	
 	public Object call() throws Exception
 	{
@@ -83,7 +80,6 @@ public class DataDumpJob extends AJob
 			status = JobStatus.Succeed;
 		} catch (DataIOException e)
 		{
-			m_failed = true;
 			status = JobStatus.Failed;
 			String message = "Data dump failed : " + e.getMessage();
 			this.setMessage(message);
@@ -92,27 +88,26 @@ public class DataDumpJob extends AJob
 		}
 		finally{
 			this.setStatus(status);
-			this.hasFinished();
 		}
 		return status;
 	}
 
 	@Override
-	public void handleResult(Object result) throws JobOperationException {
-		try {
-			JobStatus status = (JobStatus)this.getResult().get();
+	public boolean handleResult(Object result) throws JobOperationException {
+
+		JobStatus status = (JobStatus)this.getResult();
 			
-			if( status == JobStatus.Failed)
-			{
-				logger.error("The data dump job for "+ ((MappingInfo)m_mapping).getObjectId()+" "+((MappingInfo)m_mapping).getTsType()
+		if( status == JobStatus.Succeed )
+			return true;
+		else if( status == JobStatus.Failed)
+		{
+			logger.error("The data dump job for "+ ((MappingInfo)m_mapping).getObjectId()+" "+((MappingInfo)m_mapping).getTsType()
 						+" has failed with message " + this.getMessage() );
-			}
-		} catch (InterruptedException e) {
-			throw new JobOperationException("Get job result failed "+e.getMessage(), e);
-			
-		} catch (ExecutionException e) {
-			throw new JobOperationException("Get job result failed "+e.getMessage(), e);
+				
+			return false;
 		}
+			
+		return false;
 	}
 
 }

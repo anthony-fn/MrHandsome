@@ -9,4 +9,6 @@
 	<Type id = "7" type = "ValueUnit">SplitedLowMarketPrice</Type>
 	<Type id = "8" type = "ValueUnit">SplitedCloseMarketPrice</Type>
 	<Type id = "9" type = "ValueUnit">DivendendPerShareOverOneYear</Type>
+	<Type id = "10000" type = "ValueUnit">TestValueUnit</Type>
+	<Type id = "10001" type = "StringUnit">TestStringUnit</Type>
 </UniformTypes>

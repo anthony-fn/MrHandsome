@@ -1,5 +1,7 @@
 package com.anthony.playstation.executor;
 
+import java.util.List;
+
 import com.anthony.playstation.exceptions.JobBatchException;
 
 import mstar.production.common.ConfigManager;
@@ -12,5 +14,6 @@ public abstract class AJobBatch
 	public abstract AJob popOneJob()  throws JobBatchException;
 	public abstract boolean isFinished();
 	public abstract void pushOneJob(AJob job) throws JobBatchException;
-	public abstract void getFailedJobs();
+	public abstract List<AJob> getFailedJobs();
+	public abstract void clearBatch();
 }

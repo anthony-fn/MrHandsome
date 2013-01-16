@@ -65,17 +65,25 @@ public class LocalExecutor
 		LocalExecutor.init();
 	}
 	
+	/**
+	 * Method submit(AJob).
+	 * Add one instance of AJob into the thread pool and start to execute.
+	 * @param jobBatch AJobBatch
+	
+	 * @throws JobBatchException */
 	public void submit( AJob job) throws JobOperationException
 	{
 		if( job == null )
 			throw new JobOperationException("Trying to submit a null job into executor!");
 		
+		if( job.getStatus() != JobStatus.Inited )
+			throw new JobOperationException("The job has already been submitted!");
 		job.setStatus(JobStatus.Submitted);
 		job.setResult(m_executor.submit(job));
 	}
 	
 	/**
-	 * Method submit.
+	 * Method submit(AJobBatch).
 	 * Add one instance of AJobBatch into the thread pool and start to execute.
 	 * @param jobBatch AJobBatch
 	
@@ -85,11 +93,10 @@ public class LocalExecutor
 		int count = 0;
 		while( (count++) < jobBatch.getJobNum()  )
 		{
-			AJob job = jobBatch.popOneJob();
-			if( job != null )
-			{
-				job.setStatus(JobStatus.Submitted);
-				job.setResult(m_executor.submit(job));
+			try {
+				this.submit(jobBatch.popOneJob());
+			} catch (JobOperationException e) {
+				throw new JobBatchException( "Failed to submit a job "+e.getMessage(), new Exception(e));
 			}
 		}
 	}

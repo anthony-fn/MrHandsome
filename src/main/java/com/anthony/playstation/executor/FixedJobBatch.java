@@ -74,7 +74,7 @@ public class FixedJobBatch extends AJobBatch
 		return result;
 	}
 	
-	public int checkForFailed()
+	/*public int checkForFailed()
 	{
 		int count = 0;
 		for( AJob job : m_jobs )
@@ -87,7 +87,7 @@ public class FixedJobBatch extends AJobBatch
 		}
 		
 		return count;
-	}
+	}*/
 
 	@Override
 	public boolean isFinished()
@@ -103,8 +103,13 @@ public class FixedJobBatch extends AJobBatch
 	}
 
 	@Override
-	public void getFailedJobs()
+	public List<AJob> getFailedJobs()
 	{
+		return null;
+	}
+
+	@Override
+	public void clearBatch() {
 		// TODO Auto-generated method stub
 		
 	}

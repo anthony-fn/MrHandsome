@@ -1,21 +1,16 @@
 package com.anthony.playstation.executor;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import com.anthony.playstation.exceptions.JobOperationException;
 
 public abstract class AJob implements Callable<Object>
 {
-	private boolean m_finished = false;
 	private JobStatus m_status = JobStatus.Default;
 	protected Future<Object> m_result = null;
 	protected String m_message = "";
-	
-	public void hasFinished()
-	{
-		m_finished = true;
-	}	
 	
 	public void setMessage( String message )
 	{
@@ -32,14 +27,26 @@ public abstract class AJob implements Callable<Object>
 		m_result = result;
 	}
 	
-	public Future<Object> getResult()
+	public Object getResult() throws JobOperationException
 	{
-		return m_result;
+		Object result = null;
+		try {
+			result = m_result.get();
+		} catch (InterruptedException e) {
+			throw new JobOperationException("Get job result failed "+e.getMessage(), e);
+		} catch (ExecutionException e) {
+			throw new JobOperationException("Get job result failed "+e.getMessage(), e);
+		}
+		
+		return result;
 	}
 	
 	public boolean isFinished()
 	{
-		return m_finished;
+		if( this.m_status == JobStatus.Failed || this.m_status == JobStatus.Succeed )
+			return true;
+		
+		return false;
 	}
 	
 	public void setStatus( JobStatus status )
@@ -52,6 +59,5 @@ public abstract class AJob implements Callable<Object>
 		return m_status;
 	}
 	
-	public abstract boolean isFailed();
-	public abstract void handleResult( Object result) throws JobOperationException;
+	public abstract boolean handleResult( Object result) throws JobOperationException;
 }

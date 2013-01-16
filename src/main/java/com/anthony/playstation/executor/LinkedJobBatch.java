@@ -1,3 +1,13 @@
+/**   
+* @Title: 		LinkedJobBatch.java 
+* @Package 		com.anthony.playstation.executor 
+* @Description:  
+* 				The definition of LinkedJobBatch
+* @author 		Anthony Fan
+* @date 		2013-1-15 
+* @time 		23:44:47 
+* @version 		V 1.0   
+*/
 package com.anthony.playstation.executor;
 
 
@@ -6,21 +16,34 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import com.anthony.playstation.data.mapping.MappingInfo;
 import com.anthony.playstation.exceptions.JobBatchException;
-import com.anthony.playstation.exceptions.JobOperationException;
 
+/**
+ * 
+ * LinkedJobBatch is a extendable list that could hold jobs and submit to executor as a whole.
+ */
 public class LinkedJobBatch extends AJobBatch{
 	
 	private BlockingQueue<AJob> m_jobs = new LinkedBlockingQueue<AJob>();
 	private List<AJob> m_keptJobs = new LinkedList<AJob>();
 	private Object m_lock = new Object();
 	
+	
+	/**
+	 * Method getJobNum.
+	 * Job number that has been submitted to this batch.
+	 * @return int
+	 */
 	@Override
 	public int getJobNum() {
 		return m_keptJobs.size();
 	}
 
+	/**
+	 * Method getRemaining.
+	 * The the number of jobs that has been submitted to this batch but has not started yet.
+	 * @return int
+	 */
 	@Override
 	public int getRemaining() {
 		
@@ -29,7 +52,7 @@ public class LinkedJobBatch extends AJobBatch{
 		{
 			for( AJob job : m_keptJobs )
 			{
-				if( job.getStatus() == JobStatus.Submitted )
+				if( job.getStatus() != JobStatus.Succeed && job.getStatus() != JobStatus.Failed )
 					result ++;
 			}
 		}
@@ -37,34 +60,45 @@ public class LinkedJobBatch extends AJobBatch{
 		return result;
 	}
 
+	/**
+	 * Method popOneJob.
+	 * Get a waiting job in the queue.
+	 * @return AJob
+	 * @throws JobBatchException
+	 */
 	@Override
 	public AJob popOneJob() throws JobBatchException {
 		return m_jobs.poll();
 	}
 
+	/**
+	 * Method isFinished.
+	 * Check if all jobs in the queue has finished.
+	 * @return boolean
+	 */
 	@Override
 	public boolean isFinished() {
-		if(this.getRemaining() == 0) 
+		
+		synchronized(m_lock)
 		{
 			for( AJob job : m_keptJobs )
 			{
 				JobStatus status = job.getStatus();
-				if ( status == JobStatus.Running )
-				{
-					System.out.println( ((MappingInfo)(((DataDumpJob)job).getMapping())).toString());
-					
-				}
+				
 				if( status != JobStatus.Succeed && status != JobStatus.Failed )
 					return false;
-				
 			}
 			
 			return true;
 		}
-		
-		return false;
 	}
 
+	/**
+	 * Method pushOneJob.
+	 * Push one job into the end of the queue.
+	 * @param job AJob
+	 * @throws JobBatchException
+	 */
 	@Override
 	public void pushOneJob(AJob job) throws JobBatchException {
 		try {
@@ -75,38 +109,37 @@ public class LinkedJobBatch extends AJobBatch{
 		}
 	}
 
+	/**
+	 * Method getFailedJobs.
+	 * Get a list of all the failed jobs in this batch.
+	 * @return LinkedList<AJob>
+	 */
 	@Override
-	public void getFailedJobs()
+	public List<AJob> getFailedJobs()
 	{
-		int failedNum = 0;
+		if( !this.isFinished() )
+			return null;
+		
+		List<AJob> result = new LinkedList<AJob>();
+		
 		for( AJob job : m_keptJobs )
-		{
-			JobStatus status = job.getStatus();
-			
-			if( status == JobStatus.Failed )
+		{	
+			if( job.getStatus() == JobStatus.Failed )
 			{
-				failedNum += 1;
-				try
-				{
-					job.handleResult(job.getResult());
-				} catch (JobOperationException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				result.add(job);
 			}
 		}
-		
-		if( failedNum == 0 )
-		{
-			System.out.println("No job failed !");
-		}
-		
-		else
-		{
-			System.out.println("Failed job number: "+failedNum);
-		}
-		
+		return result;
+	}
+
+	/**
+	 * Method clearBatch.
+	 * Remove all jobs from the batch.
+	 */
+	@Override
+	public void clearBatch() {
+		m_jobs.clear();
+		m_keptJobs.clear();
 	}
 
 }
