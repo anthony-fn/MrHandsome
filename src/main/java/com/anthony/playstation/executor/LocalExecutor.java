@@ -76,7 +76,8 @@ public class LocalExecutor
 		if( job == null )
 			throw new JobOperationException("Trying to submit a null job into executor!");
 		
-		if( job.getStatus() != JobStatus.Inited )
+		
+		if( job.getStatus() != JobStatus.Default && job.getStatus() != JobStatus.Inited )
 			throw new JobOperationException("The job has already been submitted!");
 		job.setStatus(JobStatus.Submitted);
 		job.setResult(m_executor.submit(job));

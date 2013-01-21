@@ -10,6 +10,7 @@
 */
 package com.anthony.playstation.data.dataunit;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -79,22 +80,26 @@ public class ValueDataUnit extends ADataUnit{
 	
 	public void setValue( int value)
 	{
-		this.m_value = value;
+		BigDecimal bd = new BigDecimal(value);
+		m_value = bd.setScale(3, BigDecimal.ROUND_HALF_UP).floatValue();
 	}
 	
 	public void setValue( long value )
 	{
-		this.m_value = value;
+		BigDecimal bd = new BigDecimal(value);
+		m_value = bd.setScale(3, BigDecimal.ROUND_HALF_UP).floatValue();
 	}
 	
 	public void setValue( float value )
 	{
-		this.m_value = value;
+		BigDecimal bd = new BigDecimal(value);
+		m_value = bd.setScale(3, BigDecimal.ROUND_HALF_UP).floatValue();
 	}
 	
 	public void setValue( double value )
 	{
-		this.m_value = (float)value;
+		BigDecimal bd = new BigDecimal(value);
+		m_value = bd.setScale(3, BigDecimal.ROUND_HALF_UP).floatValue();
 	}
 
 	/**
@@ -122,8 +127,7 @@ public class ValueDataUnit extends ADataUnit{
 	@Override
 	public void print()
 	{
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		System.out.println(sdf.format(this.getCalendar().getTime())+"\t"+m_value);
+		System.out.println(this.toString());
 	}
 	
 	@Override
@@ -134,5 +138,14 @@ public class ValueDataUnit extends ADataUnit{
 		else if ( type != DataUnitType.ValueUnit )
 			throw new InvalidDataUnitException("Instance of ValueDataUnit could only be set to have DataUnitType.ValueUnit");
 		super.setType(type);
+	}
+
+	@Override
+	public String toString()
+	{
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		float temp = m_value;
+		BigDecimal bd = new BigDecimal(temp);
+		return sdf.format(this.getCalendar().getTime())+"\t"+bd.setScale(3, BigDecimal.ROUND_HALF_UP).floatValue();
 	}
 }

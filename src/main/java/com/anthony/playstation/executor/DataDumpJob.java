@@ -47,17 +47,6 @@ public class DataDumpJob extends AJob
 		return (MappingInfo)m_mapping;
 	}
 	
-	/*@Override
-	public boolean isFailed()
-	{
-		if( !this.isFinished())
-		{
-			return false;
-		}
-		
-		return m_failed;
-	}*/
-	
 	public Object call() throws Exception
 	{
 		JobStatus status = JobStatus.Running;

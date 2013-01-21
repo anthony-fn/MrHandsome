@@ -73,21 +73,6 @@ public class FixedJobBatch extends AJobBatch
 		
 		return result;
 	}
-	
-	/*public int checkForFailed()
-	{
-		int count = 0;
-		for( AJob job : m_jobs )
-		{
-			if( job.isFailed() )
-			{
-				count ++;
-				System.out.println(((DataDumpJob)job).getMapping().getObjectId());
-			}
-		}
-		
-		return count;
-	}*/
 
 	@Override
 	public boolean isFinished()

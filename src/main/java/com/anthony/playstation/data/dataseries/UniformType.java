@@ -39,6 +39,13 @@ public class UniformType
 		setValueType(type);
 	}
 	
+	public UniformType( UniformType type )
+	{
+		setTypeID(type.getTypeID());
+		setTypeName(type.getTypeName());
+		setValueType(type.getValueType());
+	}
+	
 	/**
 	 * Instantiates a new uniform type.
 	 *
@@ -128,6 +135,16 @@ public class UniformType
 	public void setValueType(DataUnitType m_type)
 	{
 		this.m_valueType = m_type;
+	}
+	
+	public String toString()
+	{
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("Mapping ID: "+m_id+";");
+		sb.append("Mapping name: "+m_name+";");
+		sb.append("Unit type: "+ m_valueType.toString()+";");
+		return sb.toString();
 	}
 	
 	/**

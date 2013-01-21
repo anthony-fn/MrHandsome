@@ -4,7 +4,7 @@ import com.anthony.playstation.exceptions.JobOperationException;
 import com.anthony.playstation.executor.AJob;
 import com.anthony.playstation.executor.JobStatus;
 
-class TestJob extends AJob{
+public class TestJob extends AJob{
 	private int m_a = 0;
 	private int m_b = 0;
 	private String m_ope = "";

@@ -142,6 +142,8 @@ public class LocalFileProxy extends ADataIOProxy{
 	@Override
 	public int saveData(ADataAdapter adapter, DataSeries series) throws DataIOException
 	{
+		if( series == null )
+			throw new DataIOException("Can't save null as a result");
 		String fileName = m_tarprefix+"/"+series.getFileName();
 		File datafile = new File(fileName);
 		if(datafile.exists())

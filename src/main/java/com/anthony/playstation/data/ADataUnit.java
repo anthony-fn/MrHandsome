@@ -132,6 +132,11 @@ public abstract class ADataUnit{
 	 * @return Object
 	 */
 	public abstract Object getValue();
+	
+	/**
+	 * Abstract method toString()
+	 */
+	public abstract String toString();
 	/**
 	 * Abstract method print.
 	 */

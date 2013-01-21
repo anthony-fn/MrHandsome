@@ -144,13 +144,19 @@ public class DataSeries{
 		int index = 0;
 		for( ADataUnit tempunit : m_list )
 		{
+			/*if( index == m_list.size()-1 )
+			{
+				m_list.add(unit);
+				break;
+			}*/
+			
 			if(tempunit.compareDate(unit) <0 )
 			{
 				m_list.add(index, unit);
 				return;
 			}
 			else if ( tempunit.compareDate(unit) > 0 )
-			{
+			{					
 				index++;
 				continue;
 			}
@@ -282,6 +288,20 @@ public class DataSeries{
 	public void setPerformanceID(String m_objID)
 	{
 		this.m_objID = m_objID;
+	}
+	
+	public String toString()
+	{
+		StringBuilder sb = new StringBuilder();
+		sb.append("DataSeries "+ this.getPerformanceID() + "\t" + this.getUniType().getTypeName()+"\n");
+		
+		for( ADataUnit unit : m_list )
+		{
+			sb.append(unit.toString());
+			sb.append("\n");
+		}
+		
+		return sb.toString();
 	}
 
 }

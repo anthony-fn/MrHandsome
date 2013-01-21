@@ -9,8 +9,11 @@ import org.junit.Test;
 
 import com.anthony.playstation.configuration.ChinaEquity;
 import com.anthony.playstation.configuration.ChinaEquityMarket;
+import com.anthony.playstation.data.dataseries.UniformType;
+import com.anthony.playstation.data.dataseries.UniformTypeDB;
 import com.anthony.playstation.data.mapping.MappingInfo;
 import com.anthony.playstation.data.mapping.MappingType;
+import com.anthony.playstation.data.mapping.UniformMapping;
 import com.anthony.playstation.dataAPI.ADataIOProxyFactory;
 import com.anthony.playstation.dataAPI.LocalFileProxyFactory;
 import com.anthony.playstation.dataAPI.TSDBProxyFactory;
@@ -18,11 +21,13 @@ import com.anthony.playstation.exceptions.ConfigurationException;
 import com.anthony.playstation.exceptions.DataProxyOperationException;
 import com.anthony.playstation.exceptions.JobBatchException;
 import com.anthony.playstation.exceptions.JobOperationException;
+import com.anthony.playstation.executor.AJob;
 import com.anthony.playstation.executor.AJobBatch;
 import com.anthony.playstation.executor.AJobFactory;
 import com.anthony.playstation.executor.DataDumpJobFactory;
 import com.anthony.playstation.executor.LinkedJobBatch;
 import com.anthony.playstation.executor.LocalExecutor;
+import com.anthony.playstation.executor.NumberedAverageJobFactory;
 
 public class DataDump
 {
@@ -41,8 +46,8 @@ public class DataDump
 		
 		try
 		{
-			m_source = new TSDBProxyFactory(ConfigManager.getInstance().getString("TSDB_Source"),
-					ConfigManager.getInstance().getString("TSDB_Target"));
+			//m_source = new TSDBProxyFactory(ConfigManager.getInstance().getString("TSDB_Source"),
+			//		ConfigManager.getInstance().getString("TSDB_Target"));
 			m_target = new LocalFileProxyFactory(ConfigManager.getInstance().getString("LocalFile_Source"),
 					ConfigManager.getInstance().getString("LocalFile_Target"));
 			
@@ -67,7 +72,7 @@ public class DataDump
 	public static void tearDownAfterClass() throws Exception {
 		try
 		{
-			m_source.closeFactory();
+			//m_source.closeFactory();
 			m_target.closeFactory();
 			m_executor.dispose();
 		} catch (DataProxyOperationException e)
@@ -79,6 +84,50 @@ public class DataDump
 		logger.info("*****Finished testing class DataDump*****");
 	}
 	
+	@Test
+	public void calculateFixedNumberedAverage()
+	{
+		
+		UniformType type = null;
+		try {
+			type = UniformTypeDB.getType(8);
+		} catch (ConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		AJobBatch jobBatch = null;
+		try
+		{
+			jobBatch = new LinkedJobBatch();
+			for( ChinaEquity equity : m_market.getMemberList() )
+			{
+				UniformMapping mapping = new UniformMapping(equity.getPerformanceID(), type);
+				//UniformMapping mapping = new UniformMapping("0P0000XAIF", type);
+				NumberedAverageJobFactory factory = new NumberedAverageJobFactory(m_target, m_target);
+				jobBatch.pushOneJob(factory.getOneJob(mapping));
+			}
+			
+			m_executor.submit(jobBatch);
+			logger.info("JobBatch size "+ jobBatch.getJobNum());
+		}
+		catch (JobOperationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JobBatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		while( !jobBatch.isFinished() )
+		{
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			logger.info(jobBatch.getRemaining()+"/"+jobBatch.getJobNum());
+		}
+	}
 	@Test
 	public void dumpDivendendPerShare()
 	{
@@ -123,7 +172,6 @@ public class DataDump
 		}
 			jobBatch.getFailedJobs();
 	}
-	
 	@Test
 	public void dumpPrice()
 	{
@@ -176,7 +224,4 @@ public class DataDump
 		}
 		
 	}
-	@Test
-	public void test()
-	{}
 }

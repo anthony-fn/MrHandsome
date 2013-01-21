@@ -10,6 +10,7 @@
 */
 package com.anthony.playstation.data.dataunit;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import com.anthony.playstation.data.ADataUnit;
@@ -98,7 +99,7 @@ public class StringDataUnit extends ADataUnit{
 	@Override
 	public void print()
 	{
-		System.out.println(this.getCalendar().toString()+"\t"+m_value);
+		System.out.println(this.toString());
 	}
 
 	/* (non-Javadoc)
@@ -121,6 +122,13 @@ public class StringDataUnit extends ADataUnit{
 		else if ( type != DataUnitType.StringUnit )
 			throw new InvalidDataUnitException("Instance of StringDataUnit could only be set to have DataUnitType.StringUnit");
 		super.setType(type);
+	}
+
+	@Override
+	public String toString()
+	{
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		return sdf.format(this.getCalendar().getTime())+"\t"+m_value;
 	}
 	
 	
