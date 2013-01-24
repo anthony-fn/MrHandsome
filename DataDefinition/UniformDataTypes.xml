@@ -13,6 +13,9 @@
 	<Type id = "11" type="ValueUnit">15DayAverage</Type>
 	<Type id = "12" type="ValueUnit">30DayAverage</Type>
 	<Type id = "13" type="ValueUnit">60DayAverage</Type>
+	<Type id = "9997" type = "ValueUnit">CalculatedDefaultUnit</Type>
+	<Type id = "9998" type = "ValueUnit">CalculatedValueUnit</Type>
+	<Type id = "9999" type = "StringUnit">CalculatedStringUnit</Type>
 	<Type id = "10000" type = "ValueUnit">TestValueUnit</Type>
 	<Type id = "10001" type = "StringUnit">TestStringUnit</Type>
 </UniformTypes>

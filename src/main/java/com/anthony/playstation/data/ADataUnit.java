@@ -14,6 +14,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import com.anthony.playstation.PlaystationUtility;
 import com.anthony.playstation.data.dataunit.DataUnitType;
 import com.anthony.playstation.exceptions.InvalidDataUnitException;
 
@@ -53,11 +54,7 @@ public abstract class ADataUnit{
 	 * @param Calendar. Only yyyy-MM-dd is kept.
 	 */
 	public void setCalendar(Calendar cal) {
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		this.m_cal = cal;
+		this.m_cal = PlaystationUtility.unifyCalendar(cal);
 	}
 	
 	/**

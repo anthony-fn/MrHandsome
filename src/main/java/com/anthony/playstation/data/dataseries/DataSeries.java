@@ -10,11 +10,13 @@
 */
 package com.anthony.playstation.data.dataseries;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.anthony.playstation.PlaystationUtility;
 import com.anthony.playstation.data.ADataUnit;
 import com.anthony.playstation.data.dataunit.DataUnitType;
 import com.anthony.playstation.exceptions.InvalidDataUnitException;
@@ -37,10 +39,10 @@ public class DataSeries{
 	private UniformType m_uniType = null;
 	
 	/** Start date of the records. */
-	private Date m_startDate = null;
+	private Calendar m_startDate = null;
 	
 	/** End date of the records. */
-	private Date m_endDate = null;
+	private Calendar m_endDate = null;
 	
 	/**
 	 * Instantiates an empty DataSeries with basic data type information.
@@ -52,6 +54,9 @@ public class DataSeries{
 	{
 		m_uniType = type;
 		m_objID = perID;
+		m_startDate = PlaystationUtility.unifyCalendar(null);
+		m_endDate = PlaystationUtility.unifyCalendar(null);
+		
 	}
 	
 	/**
@@ -113,6 +118,11 @@ public class DataSeries{
 		return sb.toString();
 	}
 
+	private void setDates( Calendar date )
+	{
+		this.setStartDate(date);
+		this.setEndDate(date);
+	}
 	
 	/**
 	 * Add a new DataUnit into current DataSeries.
@@ -126,7 +136,7 @@ public class DataSeries{
 	 */
 	public void addUnit( ADataUnit unit ) throws InvalidDataUnitException
 	{
-		//new unit shoudl have the same UniformType.
+		//new unit should have the same UniformType.
 		if( !this.isValidType(unit) )
 		{
 			StringBuilder sb = new StringBuilder();
@@ -143,16 +153,11 @@ public class DataSeries{
 		
 		int index = 0;
 		for( ADataUnit tempunit : m_list )
-		{
-			/*if( index == m_list.size()-1 )
-			{
-				m_list.add(unit);
-				break;
-			}*/
-			
+		{			
 			if(tempunit.compareDate(unit) <0 )
 			{
 				m_list.add(index, unit);
+				this.setDates(unit.getCalendar());
 				return;
 			}
 			else if ( tempunit.compareDate(unit) > 0 )
@@ -164,7 +169,7 @@ public class DataSeries{
 			{
 				// If the Date value in new DataUnit has already been in current DataSeries, throw an exception.
 				StringBuilder sb = new StringBuilder();
-				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 				
 				sb.append("Adding an exiting DataUnit into data series ");
 				sb.append(sdf.format(unit.getCalendar().getTime()));
@@ -210,7 +215,7 @@ public class DataSeries{
 	 *
 	 * @return the start date
 	 */
-	public Date getStartDate() {
+	public Calendar getStartDate() {
 		return m_startDate;
 	}
 
@@ -219,8 +224,11 @@ public class DataSeries{
 	 *
 	 * @param m_startDate the new start date
 	 */
-	public void setStartDate(Date m_startDate) {
-		this.m_startDate = m_startDate;
+	private void setStartDate(Calendar startDate) {
+		if( m_startDate == null )
+			m_startDate = startDate;
+		else if ( m_startDate.compareTo(startDate) > 0 )
+			m_startDate = startDate;
 	}
 
 	/**
@@ -228,7 +236,7 @@ public class DataSeries{
 	 *
 	 * @return the end date
 	 */
-	public Date getEndDate() {
+	public Calendar getEndDate() {
 		return m_endDate;
 	}
 
@@ -237,10 +245,30 @@ public class DataSeries{
 	 *
 	 * @param m_endDate the new end date
 	 */
-	public void setEndDate(Date m_endDate) {
-		this.m_endDate = m_endDate;
+	private void setEndDate(Calendar endDate) {
+		
+		if( m_endDate == null )
+			m_endDate = endDate;
+		else if ( m_endDate.compareTo(endDate) < 0 )
+		{
+			m_endDate = endDate;
+		}
 	}
 
+	public Object getValue( Calendar cal )
+	{
+		PlaystationUtility.unifyCalendar(cal);
+		
+		if( cal.compareTo(m_startDate) < 0 || cal.compareTo(m_endDate) > 0 )
+			return null;
+		
+		for( ADataUnit unit : m_list )
+		{
+			if( cal.compareTo(unit.getCalendar()) == 0 )
+				return unit.getValue();
+		}
+		return null;
+	}
 	/**
 	 * Gets the series size.
 	 *
@@ -302,6 +330,48 @@ public class DataSeries{
 		}
 		
 		return sb.toString();
+	}
+	
+	public ADataUnit getUnit( Calendar cal )
+	{
+		PlaystationUtility.unifyCalendar(cal);
+		
+		if( cal.compareTo(m_startDate) < 0 || cal.compareTo(m_endDate) > 0 )
+			return null;
+		
+		for( ADataUnit unit : m_list )
+		{
+			if( cal.compareTo(unit.getCalendar()) == 0 )
+				try
+				{
+					return unit.getClass().getConstructor(Calendar.class, Object.class).newInstance(unit.getCalendar(), unit.getValue());
+				} catch (InstantiationException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalArgumentException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SecurityException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvocationTargetException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NoSuchMethodException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+		return null;
 	}
 
 }

@@ -45,6 +45,17 @@ public class StringDataUnit extends ADataUnit{
 		}
 	}
 	
+	public StringDataUnit( Calendar cal, Object obj ) throws InvalidDataUnitException
+	{
+		this.setCalendar(cal);
+		this.setValue(obj);
+		try {
+			this.setType(DataUnitType.StringUnit);
+		} catch (InvalidDataUnitException e) {
+			//Should not happen
+		}
+	}
+	
 	/**
 	 * Constructor for ValueDataUnit.
 	 * @param cal String

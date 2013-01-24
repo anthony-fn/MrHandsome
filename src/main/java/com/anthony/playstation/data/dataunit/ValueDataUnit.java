@@ -59,6 +59,13 @@ public class ValueDataUnit extends ADataUnit{
 		this.setType(DataUnitType.ValueUnit);
 	}
 
+	public ValueDataUnit( Calendar cal, Object obj ) throws InvalidDataUnitException
+	{
+		this.setCalendar(cal);
+		this.setValue(obj);
+		this.setType(DataUnitType.ValueUnit);
+	}
+	
 	/**
 	 * Method getValue.
 	 * @return float

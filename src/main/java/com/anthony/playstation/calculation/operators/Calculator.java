@@ -1,11 +1,16 @@
 package com.anthony.playstation.calculation.operators;
 
+import java.util.Calendar;
+
+import com.anthony.playstation.PlaystationUtility;
+import com.anthony.playstation.data.ADataUnit;
 import com.anthony.playstation.data.dataseries.DataSeries;
 import com.anthony.playstation.data.dataseries.UniformType;
 import com.anthony.playstation.data.dataseries.UniformTypeDB;
 import com.anthony.playstation.data.dataunit.DataUnitType;
 import com.anthony.playstation.exceptions.CalculationException;
 import com.anthony.playstation.exceptions.ConfigurationException;
+import com.anthony.playstation.exceptions.InvalidDataUnitException;
 import com.anthony.playstation.exceptions.InvalidOperationException;
 
 public class Calculator {
@@ -72,5 +77,58 @@ public class Calculator {
 		return result;
 	}
 	
+	private static UniformType getUnitType( DataUnitType type ) throws ConfigurationException
+	{
+		switch( type )
+		{
+		case ValueUnit:
+			return UniformTypeDB.getType(CalculatedValueSeries);
+		case StringUnit:
+			return UniformTypeDB.getType(CalculatedStringSeries);
+		
+		default:
+			return UniformTypeDB.getType(CalculatedDefaultSeries);
+		}
+	}
+	
+	
+	
+	public static DataSeries largerThan( DataSeries front, DataSeries end ) throws CalculationException
+	{
+		if( front == null || end == null || front.getValueType() != end.getValueType())
+			throw new CalculationException("Invalid input to compare");
+		DataSeries result = null;
+		UniformType type = null;
+		
+		try{
+			getUnitType(front.getValueType());
+		}
+		catch( ConfigurationException e)
+		{
+			throw new CalculationException("Can't init result series "+e.getMessage(), new Exception(e));
+		}
+		
+		result = new DataSeries(type, "");
+		
+		Calendar from = PlaystationUtility.copyCalendar(PlaystationUtility.getStart(front.getStartDate(), end.getStartDate()));
+		Calendar to = PlaystationUtility.copyCalendar(PlaystationUtility.getEnd(front.getEndDate(), end.getEndDate()));
+		
+		for( ; from.compareTo(to) <= 0; from.add(Calendar.DAY_OF_YEAR, 1))
+		{
+			ADataUnit a = front.getUnit(from);
+			ADataUnit b = front.getUnit(from);
+			
+			try
+			{
+				if( a.compareValue(b) > 0 )
+					result.addUnit(a);
+			} catch (InvalidDataUnitException e)
+			{
+				throw new CalculationException("Can't add data unit into result "+e.getMessage());
+			}
+		}
+		
+		return result;
+	}
 
 }
